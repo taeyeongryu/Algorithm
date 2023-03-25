@@ -33,7 +33,7 @@ public class Main {
 	static int M;
 	static int max = Integer.MIN_VALUE;
 
-	static void combination(int depth, int at, int count) {
+	static void combination( int at, int count) {
 		if (count == 3) {
 			for (int i = 0; i < arr.length; i++) {
 				Node tmp = arr[i];
@@ -53,12 +53,10 @@ public class Main {
 			}
 			return;
 		}
-		if (depth == list.size()) {
-			return;
-		}
+		
 		for (int i = at; i < list.size(); i++) {
-			arr[depth] = list.get(i);
-			combination(depth + 1, i + 1, count + 1);
+			arr[count] = list.get(i);
+			combination(i + 1, count + 1);
 		}
 
 	}
@@ -119,7 +117,7 @@ public class Main {
 				}
 			}
 		}
-		combination(0, 0, 0);
+		combination( 0, 0);
 		System.out.println(max);
 	}
 }
