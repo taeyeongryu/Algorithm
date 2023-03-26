@@ -1,4 +1,6 @@
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class Main {
@@ -36,13 +38,14 @@ public class Main {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException{
 		Scanner sc = new Scanner(System.in);
-		int N = sc.nextInt();
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int N = Integer.parseInt(br.readLine());
 		arr = new int[N];
 		tmp = new int[arr.length];
 		for (int i = 0; i < N; i++) {
-			arr[i] = sc.nextInt();
+			arr[i] = Integer.parseInt(br.readLine());
 		}
 		mergeSort(0, arr.length);
 		StringBuilder sb = new StringBuilder();
