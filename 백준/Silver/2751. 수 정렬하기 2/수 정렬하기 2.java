@@ -1,55 +1,55 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.StringTokenizer;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class Main {
-	static int[] buff;
+	static int[] arr;
+	static int[] tmp;
 
-	static void __mergeSort(int[] a, int left, int right) {
-		if (left < right) {
-			int i;
-			int center = (left + right) / 2;
-			int p = 0;
-			int j = 0;
-			int k = left;
+	static void mergeSort(int start, int end) {
+		if (start + 1 == end)
+			return;
+		int mid = (start + end) / 2;
 
-			__mergeSort(a, left, center);
-			__mergeSort(a, center + 1, right);
-			for (i = left; i <= center; i++) {
-				buff[p++] = a[i];
+		mergeSort(start, mid);
+		mergeSort(mid, end);
+		merge(start, end);
+
+	}
+
+	static void merge(int start, int end) {
+		int mid = (start + end) / 2;
+		int idx1 = start;
+		int idx2 = mid;
+		for (int i = start; i < end; i++) {
+			if (idx1 == mid) {
+				tmp[i] = arr[idx2++];
+			} else if (idx2 == end) {
+				tmp[i] = arr[idx1++];
+			} else if (arr[idx1] < arr[idx2]) {
+				tmp[i] = arr[idx1++];
+			} else {
+				tmp[i] = arr[idx2++];
 			}
-			while (i <= right && j < p) {
-				a[k++] = (buff[j] <= a[i]) ? buff[j++] : a[i++];
-			}
-			while (j < p) {
-				a[k++] = buff[j++];
-			}
+		}
+		for (int i = start; i < end; i++) {
+			arr[i] = tmp[i];
 		}
 	}
 
-	static void mergeSort(int[] a, int n) {
-		buff = new int[n];
-		__mergeSort(a, 0, n - 1);
-		buff = null;
-	}
-
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		int N = Integer.parseInt(br.readLine());
-		int[] a = new int[N];
-		for (int i = 0; i < a.length; i++) {
-			a[i]=Integer.parseInt(br.readLine());
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int N = sc.nextInt();
+		arr = new int[N];
+		tmp = new int[arr.length];
+		for (int i = 0; i < N; i++) {
+			arr[i] = sc.nextInt();
 		}
-		mergeSort(a, N);
-		for (int i = 0; i < a.length; i++) {
-			bw.write(a[i]+"\n");
+		mergeSort(0, arr.length);
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < N; i++) {
+			sb.append("" + arr[i] + "\n");
 		}
-		bw.flush();
-		bw.close();
+		System.out.println(sb.toString());
 	}
 
 }
