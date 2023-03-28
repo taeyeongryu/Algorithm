@@ -1,7 +1,9 @@
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Main {
 	static class Node {
@@ -165,8 +167,9 @@ public class Main {
 		}
 	}
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
 		maze_tmp = new int[5][5][5];
 		maze = new int[5][5][5];
 		arr = new int[5];
@@ -174,12 +177,13 @@ public class Main {
 		rotate = new int[5];
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
+				st = new StringTokenizer(br.readLine());
 				for (int j2 = 0; j2 < 5; j2++) {
-					maze[i][j][j2] = sc.nextInt();
+					maze[i][j][j2] = Integer.parseInt(st.nextToken());
 				}
 			}
 		}
 		permu(0);
-		System.out.println(min==Integer.MAX_VALUE?-1:min);
+		System.out.println(min == Integer.MAX_VALUE ? -1 : min);
 	}
 }
