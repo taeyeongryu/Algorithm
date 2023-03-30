@@ -3,10 +3,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Scanner;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Solution {
@@ -29,6 +27,28 @@ public class Solution {
 
 	}
 
+	static class Node implements Comparable<Node> {
+		int index;
+		double num;
+
+		@Override
+		public String toString() {
+			return "Node [index=" + index + ", num=" + num + "]";
+		}
+
+		public Node(int index, double num) {
+			super();
+			this.index = index;
+			this.num = num;
+		}
+
+		@Override
+		public int compareTo(Node o) {
+			return Double.compare(this.num, o.num);
+		}
+
+	}
+
 	static class island {
 		long x;
 		long y;
@@ -47,57 +67,17 @@ public class Solution {
 
 	static island[] island_arr;
 	static int N;
-	static int[] P;
-
-	// 부모찾는 것이랑
-	static int find(int x) {
-		if (P[x] == x) {
-			return P[x];
-		} else {
-			P[x] = find(P[x]);
-			return P[x];
-		}
-	}
-
-	// 합치는것이랑
-	static void union(int x, int y) {
-		P[find(x)] = find(y);
-	}
-
-	// 두 정점이 같은 그룹인지 확인하는 메서드
-	static boolean unioncheck(int x, int y) {
-		return find(x) == find(y);
-	}
-
-	static int[] choice = new int[2];
-
-	static void combi(int count, int at) {
-		if (count == 2) {
-			island tmp1 = island_arr[choice[0]];
-			island tmp2 = island_arr[choice[1]];
-			// 거리 계산하자.
-			long x = Math.abs(tmp1.x - tmp2.x);
-			long y = Math.abs(tmp1.y - tmp2.y);
-			double num = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-			edgeList.add(new Edge(choice[0], choice[1], num));
-			return;
-		}
-		for (int i = at; i <= N; i++) {
-			choice[count] = i;
-			combi(count + 1, i + 1);
-		}
-	}
-
-	static List<Edge> edgeList = new ArrayList<>();
+	static ArrayList<Node>[] adjlist;
+	static boolean[] choice;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int T = Integer.parseInt(br.readLine());
 		for (int tc = 1; tc <= T; tc++) {
-			edgeList = new ArrayList<>();
 			N = Integer.parseInt(br.readLine());
-			P = new int[N + 1];
+			adjlist = new ArrayList[N + 1];
 			island_arr = new island[N + 1];
+			choice = new boolean[N + 1];
 			String island_x = br.readLine();
 			String island_y = br.readLine();
 			StringTokenizer st1 = new StringTokenizer(island_x);
@@ -105,39 +85,55 @@ public class Solution {
 			for (int i = 1; i <= N; i++) {
 				island_arr[i] = new island(Long.parseLong(st1.nextToken()), Long.parseLong(st2.nextToken()));
 			}
-			double tax = Double.parseDouble(br.readLine());
-			combi(0, 1);
-//			System.out.println(Arrays.toString(island_arr));
-			Collections.sort(edgeList, new Comparator<Edge>() {
-
-				@Override
-				public int compare(Edge o1, Edge o2) {
-					// TODO Auto-generated method stub
-					return o1.num - o2.num >= 0 ? 1 : -1;
-				}
-
-			});
-			for (int i = 1; i <= N; i++) {
-				P[i] = i;
+			for (int i = 0; i <= N; i++) {
+				adjlist[i] = new ArrayList<>();
 			}
+//			System.out.println(Arrays.toString(island_arr));
+			for (int i = 1; i <= N; i++) {
+				island tmp1 = island_arr[i];
+				for (int j = 1; j <= N; j++) {
+					if (i != j) {
+						island tmp2 = island_arr[j];
+						// 거리 계산하자.
+						long x = Math.abs(tmp1.x - tmp2.x);
+						long y = Math.abs(tmp1.y - tmp2.y);
+						double num = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+						adjlist[i].add(new Node(j, num));
+					}
+				}
+			}
+			double tax = Double.parseDouble(br.readLine());
+//			for (int i = 1; i < adjlist.length; i++) {
+//				ArrayList<Node> tmp = adjlist[i];
+//				for (Node node : tmp) {
+//					System.out.println(node);
+//				}
+//			}
+			int start = 1;
 			double ans = 0;
 			int pick = 0;
-			for (int i = 0; i < edgeList.size(); i++) {
-				long x = edgeList.get(i).start;
-				long y = edgeList.get(i).end;
+			PriorityQueue<Node> pq = new PriorityQueue<>();
 
-				if (find((int) x) != find((int) y)) {
-					union((int) x, (int) y);
-					ans += Math.pow(edgeList.get(i).num, 2) * tax;
-					pick++;
+			pq.offer(new Node(1, 0));
+			while (!pq.isEmpty()) {
+				Node tmp = pq.poll();
+				int cur_index = tmp.index;
+				double cur_num = tmp.num;
+
+				if (choice[tmp.index]) {
+					continue;
 				}
-				if (pick == N - 1) {
-					break;
+				ans += tax * Math.pow(cur_num, 2);
+				choice[cur_index] = true;
+
+				for (Node node : adjlist[cur_index]) {
+					if (!choice[node.index]) {
+						pq.add(node);
+					}
 				}
 			}
-			System.out.printf("#%d %d%n", tc, (long) Math.round(ans));
+			System.out.printf("#%d %d%n", tc, Math.round(ans));
+//			System.out.printf("#%d %d%n", tc, (long) Math.round(ans));
 		}
-
 	}
-
 }
