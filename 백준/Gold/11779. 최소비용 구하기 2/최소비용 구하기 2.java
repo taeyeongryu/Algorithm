@@ -66,7 +66,6 @@ public class Main {
 			if (d[now] < dist) {
 				continue;
 			}
-			//이곳 까지 도착했다는 것은 지금 이 노드는 시작점부터 현재노드까지의 거리가 최솟값으로 확정되었다는 의미이다.
 			//현재노드의 인접리스트를 차례대로 고려한다.
 			for (int i = 0; i < graph.get(now).size(); i++) {
 				Node next_node = graph.get(now).get(i);
@@ -75,8 +74,6 @@ public class Main {
 				//만약에 d[now]즉 현재 노드까지의 최소값에다 현재노드부터 다음노드 즉 next_node까지의 거리를
 				//더한 값, d[now] + distance이 현재 내가 알고 있는 시작점부터 next_node까지 거리보다 작다면
 				//그 값으로 d 배열을 경신해주고 시작노드부터 next_node까지의 거리를 구해서 queue에 넣어준다.
-				//이렇게 한 이유는 뭐냐하면
-				//d[now]는 현재 인덱스 까지의 최솟값이 보장되기 때문에 여기서부터 다음 노드까지의 값을 고려해 주는 것이다.
 				if (d[now] + distance < d[index]) {
 					d[index] = d[now] + distance;
 					pq.offer(new Node(index, d[now] + distance));
