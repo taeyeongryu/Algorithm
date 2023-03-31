@@ -38,6 +38,9 @@ public class Main {
 	//최단거리임을 확정하기 위한 배열
 	//이 배열의 값을 무한대로 채워놓은다음 그 값보다 작은 값이 pq에서 pop되면 
 	//그 시작노드부터 그 노드까지의 거리를 확정해준다.
+	//d 배열만 만들고 visited배열을 따로 만들지 않은 이유는
+	//pq에서 poll하고 그 값이 현재 d에 있는 값보다 작다면 그값이 최솟값으로 확정되므로
+	//앞으로 나오는 값들은 그 값보다 크게된다. 따라서 visited배열을 true로 바꿔 놓은 것과 같은 의미를 가진다.
 	static int[] d;
 	static int[] trace;
 
@@ -49,19 +52,31 @@ public class Main {
 		//pq에 들어가게 되고 그러면 시작노드의 도착 값이 이상한 값으로 설정 될수 있다.
 		//0으로 설정하면 0을 도착노드로 하는 edge는 절대 pq에 들어가지 않는다.
 		d[start] = 0;
+		//먼저 시작노드를 넣는다
 		pq.add(new Node(start, 0));
 		while (!pq.isEmpty()) {
+			//큐에서 poll을 한다. 우선순위 큐에서 poll을 했다는 것은
+			//이미 확정된 노드에서 확정되지 않은 edge들중 가장 최소의 값을 갖는 edge를 의미한다.
 			Node node = pq.poll();
 			int dist = node.distance;
 			int now = node.index;
+			//만약에 지금 poll한 값이 현재까지 최소라고 경신한 값보다 작다면
+			//이미 값을 확정한 노드이므로 continue해서 그 다음 작은 값을 갖는 edge를 poll하기 위해
+			//continue 한다.
 			if (d[now] < dist) {
 				continue;
 			}
+			//이곳 까지 도착했다는 것은 지금 이 노드는 시작점부터 현재노드까지의 거리가 최솟값으로 확정되었다는 의미이다.
+			//현재노드의 인접리스트를 차례대로 고려한다.
 			for (int i = 0; i < graph.get(now).size(); i++) {
 				Node next_node = graph.get(now).get(i);
 				int index = next_node.index;
 				int distance = next_node.distance;
-
+				//만약에 d[now]즉 현재 노드까지의 최소값에다 현재노드부터 다음노드 즉 next_node까지의 거리를
+				//더한 값, d[now] + distance이 현재 내가 알고 있는 시작점부터 next_node까지 거리보다 작다면
+				//그 값으로 d 배열을 경신해주고 시작노드부터 next_node까지의 거리를 구해서 queue에 넣어준다.
+				//이렇게 한 이유는 뭐냐하면
+				//d[now]는 현재 인덱스 까지의 최솟값이 보장되기 때문에 여기서부터 다음 노드까지의 값을 고려해 주는 것이다.
 				if (d[now] + distance < d[index]) {
 					d[index] = d[now] + distance;
 					pq.offer(new Node(index, d[now] + distance));
