@@ -55,14 +55,17 @@ public class Main {
 	static Point[] points;
 	static ArrayList<Edge> edgelist;
 	static int parent[];
-
+	//나의 부모값이 내가 아니면 즉, 내가 루트노드가 아니라면
+	//나의 부모의 부모를 찾아서 나의 부모값에 저장
 	static int find(int idx) {
 		if (parent[idx] != idx) {
 			parent[idx] = find(parent[idx]);
 		}
 		return parent[idx];
 	}
-
+	//여기서 핵심은 start와 end의 부모를 찾고
+	//다르다면 start와 end를 연결시켜줄것이 아니라
+	//start와 end의 부모를 연결시켜줘야 한다.
 	static boolean union(int start, int end) {
 		boolean flag = false;
 		start = find(start);
