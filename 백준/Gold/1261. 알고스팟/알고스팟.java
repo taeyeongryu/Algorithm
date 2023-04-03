@@ -41,26 +41,6 @@ public class Main {
 	static int N;
 	static int M;
 
-//	static void Back(int r, int c, int count) {
-//		if (r == N - 1 && c == N - 1) {
-//			min = Math.min(min, count);
-//			return;
-//		}
-//		for (int i = 0; i < dc.length; i++) {
-//			int nr = r + dr[i];
-//			int nc = c + dc[i];
-//			if (nr < 0 || nc < 0 || nr >= N || nc >= M)
-//				continue;
-//			if (visited[nr][nc])
-//				continue;
-//			visited[nr][nc] = true;
-//			if (map[r][c] == '1')
-//				Back(nr, nc, count + 1);
-//			else
-//				Back(nr, nc, count);
-//			visited[nr][nc] = false;
-//		}
-//	}
 
 	static int bfsPriorityQueue(int r, int c) {
 		PriorityQueue<Point> pq = new PriorityQueue<>();
@@ -68,7 +48,6 @@ public class Main {
 		pq.offer(new Point(r, c, 0));
 		visited[r][c] = true;
 		while (!pq.isEmpty()) {
-//			System.out.println(pq);
 			Point cur_p = pq.poll();
 			int cur_r = cur_p.r;
 			int cur_c = cur_p.c;
