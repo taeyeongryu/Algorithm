@@ -47,9 +47,7 @@ public class Main {
 			Node c_n = pq.poll();
 			int c_i = c_n.idx;
 			int c_w = c_n.weight;
-			if (distance[c_i] < c_w) {
-				continue;
-			}
+			
 			for (int i = 0; i < adjlist[c_i].size(); i++) {
 				Node n_n = adjlist[c_i].get(i);
 				int n_i = n_n.idx;
