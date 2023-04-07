@@ -1,51 +1,52 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class Main {
+	static int[] arr;
 	static int[] L;
-
-	static int Binarysearch(int left, int right, int key) {
+	static int N,idx;
+	//들어갈 위치 찾아주는 메서드
+	//arr[i]값보다 크거나 같은 값의 인덱스를 반환한다.
+	static int binary(int i) {
+		int start = 0;
+		int end = idx;
 		int mid = 0;
-		while (left < right) {
-			mid = (left + right) / 2;
-			if (L[mid] < key) {
-				left = mid + 1;
-			} else {
-				right = mid;
+		while(start<end) {
+			mid = (start+end)/2;
+			if (L[mid]<arr[i]) {
+				start=mid+1;
+			}else {
+				end = mid;
 			}
 		}
-		return right;
+		return end;
 	}
-
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-		int N = Integer.parseInt(br.readLine());
-		// 수열 담는 배열
-		int[] arr = new int[N];
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		N = Integer.parseInt(br.readLine());
+		arr = new int[N+1];
+		L = new int[N+1];
+		idx=0;
 		StringTokenizer st = new StringTokenizer(br.readLine());
-		for (int j = 0; j < arr.length; j++) {
-			arr[j] = Integer.parseInt(st.nextToken());
+		for (int i = 1; i <=N; i++) {
+			arr[i]=Integer.parseInt(st.nextToken());
 		}
-		// idx에 해당하는 길이의 증가수열의 끝값을 저장하는 배열
-		L = new int[N + 1];
-		int len = 0;
-		int idx = 0;
-
-		for (int i = 0; i < arr.length; i++) {
-			if (arr[i] > L[len]) {
-				len += 1;
-				L[len] = arr[i];
-			} else {
-				idx = Binarysearch(0, len, arr[i]);
-				L[idx] = arr[i];
+		for (int i = 1; i <=N; i++) {
+			if (L[idx]<arr[i]) {
+				L[++idx]=arr[i];
+			}
+			else {
+				int addidx=binary(i);
+				L[addidx]=arr[i];
 			}
 		}
-		System.out.println(len);
+		System.out.println(idx);
 	}
 
 }
