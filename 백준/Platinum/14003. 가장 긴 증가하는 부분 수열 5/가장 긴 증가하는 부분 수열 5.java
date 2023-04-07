@@ -34,7 +34,7 @@ public class Main {
 		N = Integer.parseInt(br.readLine());
 		arr = new int[N+1];
 		L = new int[N+1];
-		Arrays.fill(L, Integer.MIN_VALUE);
+		L[0] = Integer.MIN_VALUE;
 		M = new int[N+1];
 		Stack<Integer> stack = new Stack<>();
 		idx=0;
