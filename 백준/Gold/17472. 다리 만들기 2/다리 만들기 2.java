@@ -120,8 +120,6 @@ public class Main {
 		PriorityQueue<edge> pq = new PriorityQueue<>();
 		pq.add(new edge(1, 0));
 		while (!pq.isEmpty()) {
-//			System.out.println(pq);
-//			System.out.println(count);
 			edge cur = pq.poll();
 			int cur_idx = cur.idx;
 			int cur_weight = cur.weight;
@@ -132,8 +130,6 @@ public class Main {
 			choice[cur_idx]=true;
 			count++;
 			weightsum+=cur_weight;
-//			System.out.println(count);
-//			System.out.println(weightsum);
 			if (count==bridgelist.length-1) {
 				return weightsum;
 			}
@@ -189,8 +185,6 @@ public class Main {
 			}
 		}
 		System.out.println(prim());
-//		System.out.println(Arrays.toString(bridgelist));
-//		System.out.println(Arrays.deepToString(map));
 	}
 
 }
