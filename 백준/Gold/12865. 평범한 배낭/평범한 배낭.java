@@ -8,10 +8,8 @@ public class Main {
 		int[] W = new int[N + 1];
 		int[] V = new int[N + 1];
 		int[][] DP = new int[101][100000 + 1];
-		int totalweight = 0;
 		for (int i = 1; i <= N; i++) {
 			W[i] = sc.nextInt();
-			totalweight += W[i];
 			V[i] = sc.nextInt();
 		}
 
