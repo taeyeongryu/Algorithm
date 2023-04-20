@@ -30,34 +30,6 @@ public class Main {
 	static char[][] map;
 	static boolean[][] visited, meltingvisited;
 
-//	static void melting() {
-//		boolean check[][] = new boolean[R][C];
-//		for (int i = 0; i < R; i++) {
-//			for (int j = 0; j < C; j++) {
-//				// 빙하라면
-//				if (map[i][j] == 'X') {
-//					for (int k = 0; k < 4; k++) {
-//						int nr = i + dr[k];
-//						int nc = j + dc[k];
-//						if (nr < 0 || nc < 0 || nr >= R || nc >= C) {
-//							continue;
-//						}
-//						if (map[nr][nc] == '.' || map[nr][nc]=='L') {
-//							check[i][j] = true;
-//							break;
-//						}
-//					}
-//				}
-//			}
-//		}
-//		for (int i = 0; i < R; i++) {
-//			for (int j = 0; j < C; j++) {
-//				if (check[i][j]) {
-//					map[i][j] = '.';
-//				}
-//			}
-//		}
-//	}
 	static void meltingbfs() {
 		// 물로 바꿔주고 주변에 아이스가 있는지 탐색한다.
 		for (int i = 0; i < iceNode.size(); i++) {
@@ -123,36 +95,6 @@ public class Main {
 		return flag;
 	}
 
-//	static void meltingbfs() {
-//		
-//		while (!q.isEmpty()) {
-//			Node cur = q.poll();
-//			int cur_r = cur.r;
-//			int cur_c = cur.c;
-//			boolean go = true;
-//			for (int k = 0; k < 4; k++) {
-//				int nr = cur_r + dr[k];
-//				int nc = cur_c + dc[k];
-//				if (nr < 0 || nc < 0 || nr >= R || nc >= C) {
-//					continue;
-//				}
-//				// 방문하지 않았고
-//				if (!visited[nr][nc]) {
-//					// 한곳이라도 지나갈 곳이 있으면
-//					if (map[nr][nc] != 'X') {
-//						q.add(new Node(nr, nc));
-//						visited[nr][nc] = true;
-//					}
-//					else if (map[nr][nc] == 'X') {
-//						go=false;
-//					}
-//				}
-//			}
-//			if (!go) {
-//				nextNode.add(cur);
-//			}
-//		}
-//	}
 
 	static int[] dr = { 1, -1, 0, 0 };
 	static int[] dc = { 0, 0, -1, 1 };
@@ -211,10 +153,6 @@ public class Main {
 		q.add(new Node(s1_r, s1_c));
 		visited[s1_r][s1_c] = true;
 		while (!bfs()) {
-//			System.out.println(iceNode);
-//			System.out.println(Arrays.deepToString(meltingvisited));
-//			System.out.println(Arrays.deepToString(visited));
-//			System.out.println(nextNode);
 			count++;
 			for (int i = 0; i < nextNode.size(); i++) {
 				q.add(nextNode.get(i));
@@ -222,19 +160,7 @@ public class Main {
 			nextNode.clear();
 			meltingbfs();
 		}
-
 		System.out.println(count);
-//		melting();
-//		System.out.println(bfs());
-//		melting();
-//		System.out.println(bfs());
-//		melting();
-//		System.out.println(bfs());
-//		System.out.println(Arrays.deepToString(map));
-//		System.out.println(s1_r);
-//		System.out.println(s1_c);
-//		System.out.println(s2_r);
-//		System.out.println(s2_c);
 	}
 
 }
