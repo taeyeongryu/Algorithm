@@ -1,65 +1,65 @@
-import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Scanner;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 public class Main {
-	static int N;
-	static int M;
-	static int[] print_arr;
-	static int[] arr;
-	static boolean[] visited;
-	static HashSet<String> set = new HashSet();
-	static LinkedList<String> list = new LinkedList<>();
-	static StringBuilder sb;
-	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+	static int N, M;
+	static int[] result, arr;
+	static boolean[] choice;
+	static StringBuilder sb = new StringBuilder();
+	static Set<String> set = new HashSet<>();
+	static List<String> list = new ArrayList<>();
 
 	static void Back(int depth) {
 		if (depth == M) {
 			sb = new StringBuilder();
-			for (int i = 0; i < print_arr.length; i++) {
-				sb.append(print_arr[i] + " ");
+			for (int i = 0; i < result.length; i++) {
+				sb.append(result[i] + " ");
 			}
 			if (!set.contains(sb.toString())) {
 				list.add(sb.toString());
 				set.add(sb.toString());
 			}
 			return;
-		} else {
-			for (int i = 0; i < arr.length; i++) {
-				if (!visited[i]) {
-					visited[i] = true;
-					print_arr[depth] = arr[i];
-					Back(depth + 1);
-					visited[i] = false;
-				}
+		}
+
+		for (int i = 0; i < N; i++) {
+			if (!choice[i]) {
+				choice[i] = true;
+				result[depth] = arr[i];
+				Back(depth + 1);
+				choice[i] = false;
 			}
 		}
 	}
 
 	public static void main(String[] args) throws IOException {
-		Scanner sc = new Scanner(System.in);
-		N = sc.nextInt();
-		M = sc.nextInt();
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		// N,M주어진다. N개중에서 순서를 고려해서 M개 뽑는 것이다.중복은 허용안됨
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
+		st = new StringTokenizer(br.readLine());
 		arr = new int[N];
-		print_arr = new int[M];
-		visited = new boolean[N];
-
-		for (int i = 0; i < arr.length; i++) {
-			arr[i] = sc.nextInt();
+		choice = new boolean[N];
+		result = new int[M];
+		for (int i = 0; i < N; i++) {
+			arr[i] = Integer.parseInt(st.nextToken());
 		}
 		Arrays.sort(arr);
 		Back(0);
-		Iterator<String> it = list.iterator();
-		while (it.hasNext()) {
-			bw.write(it.next());
-			bw.write("\n");
+		sb = new StringBuilder();
+		for (int i = 0; i < list.size(); i++) {
+			sb.append(list.get(i)+"\n");
 		}
-		bw.flush();
+		System.out.println(sb.toString());
 	}
-
 }
