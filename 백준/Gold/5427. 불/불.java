@@ -4,126 +4,117 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class Main {
-	static class Node {
+	static class Point {
 		int r;
 		int c;
-		int num;
 
-		public Node(int r, int c, int num) {
+		public Point(int r, int c) {
+			super();
 			this.r = r;
 			this.c = c;
-			this.num = num;
+		}
+
+		@Override
+		public String toString() {
+			return "Point [r=" + r + ", c=" + c + "]";
 		}
 	}
 
-	static int[] dr = { 1, -1, 0, 0 };
-	static int[] dc = { 0, 0, 1, -1 };
+	static int R, C, result;
+	static boolean flag = false;
 	static char[][] map;
-	static boolean[][] visited;
-	static int w;
-	static int h;
-	static int result;
-	static Queue<Node> fire_queue;
-	static Queue<Node> person_queue;
+	static int[] dr = { 1, -1, 0, 0 };
+	static int[] dc = { 0, 0, -1, 1 };
+	static Queue<Point> fire = new LinkedList<>();
+	static Queue<Point> person = new LinkedList<>();
 
-	static void BFS() {
-		int size = 0;
-		while (!person_queue.isEmpty()) {
-//			System.out.println(Arrays.deepToString(map));
-			size = fire_queue.size();
-			for (int f = 0; f < size; f++) {
-				Node tmp = fire_queue.poll();
-				for (int dir = 0; dir < dc.length; dir++) {
-					int nr = tmp.r + dr[dir];
-					int nc = tmp.c + dc[dir];
+	static void bfs() {
+		int time = 0;
+		int pnum = person.size();
+		int fnum = fire.size();
+		while (pnum > 0) {
+			// q에 넣을때 탈출을 파악한다.
+			// System.out.println(Arrays.deepToString(map));
+			time++;
+			while (fnum-- > 0) {
+				Point cur = fire.poll();
+				for (int i = 0; i < dc.length; i++) {
+					int nr = cur.r + dr[i];
+					int nc = cur.c + dc[i];
+					if (nr < 0 || nc < 0 || nr >= R || nc >= C) {
+						continue;
+					}
+					if (map[nr][nc] != '#' && map[nr][nc] != '*') {
+						map[nr][nc] = '*';
+						fire.add(new Point(nr, nc));
+					}
+				}
+			}
+			fnum = fire.size();
+			while (pnum-- > 0) {
+				Point cur = person.poll();
 
-					if (0 <= nr && nr < h && 0 <= nc && nc < w) {
-						if (map[nr][nc] == '@' || map[nr][nc] == '.') {
-							map[nr][nc] = '*';
-							fire_queue.offer(new Node(nr, nc, tmp.num + 1));
+				for (int i = 0; i < dc.length; i++) {
+					int nr = cur.r + dr[i];
+					int nc = cur.c + dc[i];
+					if (nr < 0 || nc < 0 || nr >= R || nc >= C) {
+						continue;
+					}
+					if (map[nr][nc] == '.') {
+						if (nr == 0 || nc == 0 || nr == R - 1 || nc == C - 1) {
+							result = time;
+							flag = true;
+							return;
+						} else {
+							map[nr][nc] = '@';
+							person.add(new Point(nr, nc));
 						}
 					}
 				}
 			}
-			size = person_queue.size();
-			for (int p = 0; p < size; p++) {
-				Node tmp = person_queue.poll();
-				for (int dir = 0; dir < dc.length; dir++) {
-					int nr = tmp.r + dr[dir];
-					int nc = tmp.c + dc[dir];
-					if (!(0 <= nr && nr < h && 0 <= nc && nc < w)) {
-						result = tmp.num + 1;
-						return;
-					}
-					if (map[nr][nc] == '.') {
-						map[nr][nc] = '@';
-						person_queue.offer(new Node(nr, nc, tmp.num + 1));
-					}
-				}
-			}
+			pnum = person.size();
 		}
-	}
-
-	static void personBFS(int r, int c) {
-//		Node person = new Node(r, c, 0);
-//		queue.offer(person);
-//		while (!queue.isEmpty()) {
-//			Node tmp = queue.poll();
-//			if (tmp.r == 0 || tmp.r == h - 1 || tmp.c == w - 1 || tmp.c == 0) {
-//				result = (tmp.num + 1);
-//			}
-//			for (int dir = 0; dir < 4; dir++) {
-//				int nr = tmp.r + dr[dir];
-//				int nc = tmp.c + dc[dir];
-//				if (0 <= nr && nr < h && 0 <= nc && nc < w) {
-//					if (map[nr][nc] != 1) {
-//						if (map[nr][nc] > tmp.num + 1) {
-//							queue.add(new Node(nr, nc, tmp.num + 1));
-//						}
-//					}
-//				}
-//			}
-//		}
 	}
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
 		int T = Integer.parseInt(br.readLine());
 		for (int tc = 0; tc < T; tc++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			C = Integer.parseInt(st.nextToken());
+			R = Integer.parseInt(st.nextToken());
+			fire = new LinkedList<>();
+			person= new LinkedList<>();
+			flag=false;
+			map = new char[R][C];
 			result = 0;
-			fire_queue = new LinkedList<>();
-			person_queue = new LinkedList<>();
-			st = new StringTokenizer(br.readLine());
-			w = Integer.parseInt(st.nextToken());
-			h = Integer.parseInt(st.nextToken());
-			map = new char[h][w];
-			visited = new boolean[h][w];
-
-			for (int i = 0; i < h; i++) {
-				char[] tmp = br.readLine().toCharArray();
-				for (int j = 0; j < w; j++) {
-					if (tmp[j] == '#') {
-						map[i][j] = '#';
-					} else if (tmp[j] == '*') {
-						map[i][j] = '*';
-						fire_queue.offer(new Node(i, j, 0));
-					} else if (tmp[j] == '@') {
-						map[i][j] = '@';
-						person_queue.offer(new Node(i, j, 0));
-					} else {
-						map[i][j] = '.';
+			for (int i = 0; i < R; i++) {
+				String str = br.readLine();
+				for (int j = 0; j < C; j++) {
+					map[i][j] = str.charAt(j);
+					if (map[i][j] == '@') {
+						if (i == 0 || j == 0 || i == R - 1 || j == C - 1) {
+							result = 1;
+						}
+						person.add(new Point(i, j));
+					} else if (map[i][j] == '*') {
+						fire.add(new Point(i, j));
 					}
 				}
 			}
-			BFS();
-			System.out.println(result == 0 ? "IMPOSSIBLE" : result);
+			if (result == 1) {
+				System.out.println(result);
+			} else {
+				bfs();
+				if (!flag) {
+					System.out.println("IMPOSSIBLE");
+				} else {
+					System.out.println(result + 1);
+				}
+			}
 		}
-		br.close();
 	}
-
 }
