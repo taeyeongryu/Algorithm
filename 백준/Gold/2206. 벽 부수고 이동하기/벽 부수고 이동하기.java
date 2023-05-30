@@ -1,88 +1,101 @@
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
-	static class Node {
+	static class Point {
 		int r;
 		int c;
-		int num;
-		boolean bbreak;
+		boolean crush;
 
-		public Node(int r, int c, int num, boolean bbreak) {
+		@Override
+		public String toString() {
+			return "Point [r=" + r + ", c=" + c + ", crush=" + crush + "]";
+		}
+
+		public Point(int r, int c, boolean crush) {
+			super();
 			this.r = r;
 			this.c = c;
-			this.num = num;
-			this.bbreak = bbreak;
+			this.crush = crush;
 		}
 	}
 
+	static int[][] map;
+	static int[][][] visited;
+	static int N, M;
 	static int[] dr = { 1, -1, 0, 0 };
 	static int[] dc = { 0, 0, 1, -1 };
-	static int N;
-	static int M;
-	static int[][] map;
-	static boolean[][][] visited;
-	static int result = Integer.MAX_VALUE;
-	static Queue<Node> queue = new LinkedList<>();
 
-	static void BFS() {
-		while (!queue.isEmpty()) {
-			Node tmp = queue.poll();
-
-			if (tmp.r == N - 1 && tmp.c == M - 1) {
-				result = tmp.num;
-				return;
-			}
-			for (int dir = 0; dir < dc.length; dir++) {
-				int nr = tmp.r + dr[dir];
-				int nc = tmp.c + dc[dir];
-				if (0 <= nr && nr < N && 0 <= nc && nc < M) {
-					// 내가 벽을 부순적이 있을 때
-					if (tmp.bbreak) {
-						// 다음노드 빈칸일 때 만 갈수 있다. 방문체크 하고 방문하지 않았다면 방문
-						if (map[nr][nc] == 0 && !visited[1][nr][nc]) {
-							visited[1][nr][nc] = true;
-							queue.offer(new Node(nr, nc, tmp.num + 1, tmp.bbreak));
+	static void bfs() {
+		Queue<Point> q = new LinkedList<>();
+		q.add(new Point(0, 0, false));
+		while (!q.isEmpty()) {
+			Point cur = q.poll();
+			for (int i = 0; i < 4; i++) {
+				int nr = cur.r + dr[i];
+				int nc = cur.c + dc[i];
+				if (nr < 0 || nc < 0 || nr >= N || nc >= M) {
+					continue;
+				}
+				// 벽 없을 때
+				if (map[nr][nc] == 0) {
+					// 깬적 있을때
+					if (cur.crush) {
+						if (visited[1][nr][nc] == 0) {
+							visited[1][nr][nc] = visited[1][cur.r][cur.c] + 1;
+							q.add(new Point(nr, nc, true));
 						}
-
 					}
-					// 내가 벽을 부순적이 없을 때
+					// 깬적 없을때
 					else {
-
-						// 만약 빈공간이면 방문체크하고 방문
-						if (map[nr][nc] == 0 && !visited[0][nr][nc]) {
-							visited[0][nr][nc] = true;
-							queue.offer(new Node(nr, nc, tmp.num + 1, tmp.bbreak));
-						}
-						// 만약 벽이면 방문 체크하고 방문
-						else if (map[nr][nc] == 1) {
-							visited[0][nr][nc] = true;
-							queue.offer(new Node(nr, nc, tmp.num + 1, true));
+						if (visited[0][nr][nc] == 0) {
+							visited[0][nr][nc] = visited[0][cur.r][cur.c] + 1;
+							q.add(new Point(nr, nc, false));
 						}
 					}
-
+				}
+				// 벽 있을 때
+				else {
+					if (!cur.crush) {
+						if (visited[1][nr][nc] == 0) {
+							visited[1][nr][nc] = visited[0][cur.r][cur.c] + 1;
+							q.add(new Point(nr, nc, true));
+						}
+					}
 				}
 			}
 		}
+
 	}
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		N = sc.nextInt();
-		M = sc.nextInt();
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
 		map = new int[N][M];
-		// 벽 부쉈는지, N,M
-		visited = new boolean[2][N][M];
+		visited = new int[2][N][M];
 		for (int i = 0; i < N; i++) {
-			String tmp = sc.next();
+			String str = br.readLine();
 			for (int j = 0; j < M; j++) {
-				map[i][j] = tmp.charAt(j) - '0';
+				map[i][j] = str.charAt(j) - '0';
 			}
 		}
-		queue.offer(new Node(0, 0, 1, false));
-		visited[0][0][0] = true;
-		visited[1][0][0] = true;
-		BFS();
-
-		System.out.println(result == Integer.MAX_VALUE ? -1 : result);
+		bfs();
+		if (N == 1 && M == 1) {
+			System.out.println(1);
+		} else if (visited[0][N - 1][M - 1] == 0 && visited[1][N - 1][M - 1] == 0) {
+			System.out.println(-1);
+		} else if (visited[0][N - 1][M - 1] == 0) {
+			System.out.println(visited[1][N - 1][M - 1] + 1);
+		} else if (visited[1][N - 1][M - 1] == 0) {
+			System.out.println(visited[0][N - 1][M - 1] + 1);
+		} else {
+			System.out.println(Math.min(visited[0][N - 1][M - 1], visited[1][N - 1][M - 1]) + 1);
+		}
 	}
 }
