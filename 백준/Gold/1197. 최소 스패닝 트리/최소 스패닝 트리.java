@@ -1,71 +1,86 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.PriorityQueue;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Main {
-	static int[] parent;
-	static PriorityQueue<pEdge> queue;
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		int N = sc.nextInt();
-		int M = sc.nextInt();
-		queue = new PriorityQueue<pEdge>();
-		parent = new int[N + 1];
-		for (int i = 1; i <= N; i++) {
-			parent[i] = i;
-		}
-		for (int i = 0; i < M; i++) {
-			int s = sc.nextInt();
-			int e = sc.nextInt();
-			int v = sc.nextInt();
-			queue.add(new pEdge(s, e, v));
-		}
-		sc.close();
-		int useEdge = 0;
-		int result = 0;
-		while (useEdge < N - 1) {
-			pEdge now = queue.poll();
-			if (find(now.s) != find(now.e)) {
-				union(now.s, now.e);
-				result += now.v;
-				useEdge++;
-			}
-		}
-		System.out.println(result);
-	}
+    static class Node implements Comparable<Node>{
+        int index;
+        int weight;
 
-	public static void union(int a, int b) {
-		a = find(a);
-		b = find(b);
-		if (a != b) {
-			parent[b] = a;
-		}
-	}
+        public Node(int index, int weight) {
+            this.index = index;
+            this.weight = weight;
+        }
+        @Override
+        public int compareTo(Node o) {
+            return Integer.compare(weight,o.weight);
+        }
 
-	public static int find(int i) {
-		if (parent[i] == i) {
-			return i;
-		} else {
-			return parent[i] = find(parent[i]);
-		}
-	}
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "index=" + index +
+                    ", weight=" + weight +
+                    '}';
+        }
+    }
+    static int V, E;
+    static ArrayList<Node>[] adjList;
+    static boolean[] check;
+    static int prim(int startNode){
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        pq.add(new Node(startNode, 0));
+        int result = 0;
+        int checkCount = 0;
+        while (!pq.isEmpty()){
+            
+            Node cur = pq.poll();
 
-}
+            //이미 확정된 노드면 건너 뛴다.
+            if(check[cur.index]){
+                continue;
+            }
+            check[cur.index]=true;
+            result += cur.weight;
+            checkCount++;
+            if(checkCount==V){
+                break;
+            }
+            for (int i = 0; i < adjList[cur.index].size(); i++) {
+                Node next = adjList[cur.index].get(i);
+                if(!check[next.index]){
+                    pq.add(next);
+                }
+            }
+        }
+        return result;
+    }
 
-class pEdge implements Comparable<pEdge> {
-	int s;
-	int e;
-	int v;
 
-	public pEdge(int s, int e, int v) {
-		this.e = e;
-		this.s = s;
-		this.v = v;
-	}
 
-	@Override
-	public int compareTo(pEdge o) {
-		return this.v - o.v;
-	}
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        V = Integer.parseInt(st.nextToken());
+        E = Integer.parseInt(st.nextToken());
+        adjList = new ArrayList[V + 1];
+        check = new boolean[V + 1];
 
+        for (int i = 0; i < adjList.length; i++) {
+            adjList[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < E; i++) {
+            st = new StringTokenizer(br.readLine());
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
+            int weight = Integer.parseInt(st.nextToken());
+            adjList[start].add(new Node(end, weight));
+            adjList[end].add(new Node(start, weight));
+        }
+        System.out.println(prim(1));
+    }
 }
