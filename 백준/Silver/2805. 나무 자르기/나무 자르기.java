@@ -27,7 +27,7 @@ public class Main {
 		}
 		
 		// 이분 탐색 - binary search
-		start = 0;
+		start = 1;
 		end = max;
 		
 		answer = binary_search(start, end);
