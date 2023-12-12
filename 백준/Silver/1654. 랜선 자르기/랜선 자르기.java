@@ -24,7 +24,6 @@ public class Main {
             }
         }
     }
-
     private static long count(long mid) {
         long count = 0;
         for (int i : kable) {
@@ -40,16 +39,11 @@ public class Main {
         StringTokenizer st = new StringTokenizer(br.readLine());
         K = Integer.parseInt(st.nextToken());
         N = Integer.parseInt(st.nextToken());
-//        if(K==N){
-//
-//        }
-//        else{
-            kable = new int[K];
-            for (int i = 0; i < K; i++) {
-                kable[i] = Integer.parseInt(br.readLine());
-            }
-            maxSize();
-            System.out.println(MAX);
+        kable = new int[K];
+        for (int i = 0; i < K; i++) {
+            kable[i] = Integer.parseInt(br.readLine());
         }
-//    }
+        maxSize();
+        System.out.println(MAX);
+        }
 }
