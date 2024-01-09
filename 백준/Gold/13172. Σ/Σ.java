@@ -7,9 +7,6 @@ import java.util.StringTokenizer;
 public class Main {
     static final int MOD = 1000000007;
     static long findMod(long under, long over, long mod){
-        if (under == 0) {
-            return 0;
-        }
         //지수가 1이면
         if (over == 1) {
             return under % mod;
