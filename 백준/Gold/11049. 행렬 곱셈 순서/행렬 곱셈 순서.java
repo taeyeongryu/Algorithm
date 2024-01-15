@@ -51,33 +51,23 @@ public class Main {
     }
 
     private static void calculate(int a, int b) {
-        if(a+1==b){
-            Matrix matrixA = calMatrix[a][a];
-            Matrix matrixB = calMatrix[b][b];
-            int cnt = matrixA.r * matrixA.c * matrixB.c;
-            calMatrix[a][b] = new Matrix(matrixA.r, matrixB.c, cnt);
-
-        }
-        else{
-            for (int i = 0; i < b - a; i++) {
-                if (calMatrix[a][a + i] == null) {
-                    calculate(a,a+i);
-                }
-                if (calMatrix[a + i + 1][b] == null) {
-                    calculate(a + i + 1, b);
-                }
-                Matrix matrixA = calMatrix[a][a+i];
-                Matrix matrixB = calMatrix[a + i + 1][b];
-                //이번에 새로 만든 cnt
-                //왼쪽꺼, 오른쪽꺼, 새로만든 거
-                int cnt = calMatrix[a][a + i].cnt + calMatrix[a + i + 1][b].cnt + matrixA.r * matrixA.c * matrixB.c;
-                if (calMatrix[a][b] == null) {
-                    calMatrix[a][b] = new Matrix(matrixA.r, matrixB.c, cnt);
-                } else {
-                    calMatrix[a][b].cnt = Math.min(cnt, calMatrix[a][b].cnt);
-                }
+        for (int i = 0; i < b - a; i++) {
+            if (calMatrix[a][a + i] == null) {
+                calculate(a, a + i);
+            }
+            if (calMatrix[a + i + 1][b] == null) {
+                calculate(a + i + 1, b);
+            }
+            Matrix matrixA = calMatrix[a][a + i];
+            Matrix matrixB = calMatrix[a + i + 1][b];
+            //이번에 새로 만든 cnt
+            //왼쪽꺼, 오른쪽꺼, 새로만든 거
+            int cnt = calMatrix[a][a + i].cnt + calMatrix[a + i + 1][b].cnt + matrixA.r * matrixA.c * matrixB.c;
+            if (calMatrix[a][b] == null) {
+                calMatrix[a][b] = new Matrix(matrixA.r, matrixB.c, cnt);
+            } else {
+                calMatrix[a][b].cnt = Math.min(cnt, calMatrix[a][b].cnt);
             }
         }
-//        System.out.println("calMatrix[" + a + "][" + b + "].cnt = " + calMatrix[a][b].cnt);
     }
 }
