@@ -1,23 +1,25 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Main {
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		int N = sc.nextInt();
-		int cnt = 0;
-		int num = 1;
-		while (true) {
-			String tmp = "" + num;
-			if (tmp.indexOf("666") != -1) {
-				cnt++;
-			}
-			if (cnt == N) {
-				System.out.println(num);
-				break;
-			}
-			num++;
-		}
-	}
+        int N = Integer.parseInt(br.readLine());
 
+        int count = 0;
+        int num = 1;
+        while(true){
+            String strNum = ""+num;
+            if(strNum.indexOf("666") != -1){
+                count++;
+            }
+            if(count==N){
+                System.out.println(num);
+                break;
+            }
+            num++;
+        }
+
+    }
 }
