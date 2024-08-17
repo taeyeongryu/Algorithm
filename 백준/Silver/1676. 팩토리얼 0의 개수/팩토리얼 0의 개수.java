@@ -10,12 +10,15 @@ public class Main {
 
         int N = Integer.parseInt(br.readLine());
         int count = 0;
-        while(N>=5){
-            count += (N / 5);
-            N /= 5;
+        for (int i = 1; i <= N; i++) {
+            int num = i;
+            if(num%5==0){
+                while(num%5==0){
+                    count++;
+                    num /= 5;
+                }
+            }
         }
-        bw.append(count + "");
-        bw.close();
-        br.close();
+        System.out.println(count);
     }
 }
