@@ -1,49 +1,56 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class Main {
-	public static int Search(int[] A, int num) {
-		int start = 0;
-		int end = A.length - 1;
-		while (start <= end) {
-			int mid = ((start + end) / 2);
-			if (A[mid] == num) {
-				return 1;
-			} else if (A[mid] > num) {
-				end = mid - 1;
-			} else
-				start = mid + 1;
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        StringTokenizer st;
+        int N = Integer.parseInt(br.readLine());
 
-		}
-		return 0;
-	}
+        int[] target = new int[N];
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		int N = Integer.parseInt(br.readLine());
-		int[] A = new int[N];
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		for (int i = 0; i < N; i++) {
-			A[i] = Integer.parseInt(st.nextToken());
-		}
-		int M = Integer.parseInt(br.readLine());
-		int[] B = new int[M];
-		st = new StringTokenizer(br.readLine());
-		for (int i = 0; i < M; i++) {
-			B[i] = Integer.parseInt(st.nextToken());
-		}
-		Arrays.sort(A);
-		for (int i = 0; i < B.length; i++) {
-			System.out.println(Search(A, B[i]));
-		}
-	}
+        st = new StringTokenizer(br.readLine());
 
+        for (int i = 0; i < target.length; i++) {
+            target[i] = Integer.parseInt(st.nextToken());
+        }
+
+        int M = Integer.parseInt(br.readLine());
+
+        int[] origin = new int[M];
+
+        st = new StringTokenizer(br.readLine());
+
+        for (int i = 0; i < origin.length; i++) {
+            origin[i] = Integer.parseInt(st.nextToken());
+        }
+        Arrays.sort(target);
+
+        outer:for (int i = 0; i < M; i++) {
+            int num = origin[i];
+            int lt = 0;
+            int rt = N - 1;
+            while (lt <= rt) {
+                int mid = (lt + rt) / 2;
+                if (num == target[mid]) {
+                    bw.append("1\n");
+                    continue outer;
+                } else if (num < target[mid]) {
+                    rt = mid - 1;
+                } else {
+                    lt = mid + 1;
+                }
+            }
+            bw.append("0\n");
+        }
+
+        bw.close();
+        br.close();
+
+    }
 }
