@@ -8,66 +8,52 @@ public class Main {
     static class Document{
         int index;
         int weight;
-        public Document(int index, int weight){
-            this.index = index;
-            this.weight = weight;
-        }
-
-        @Override
-        public String toString() {
-            return "Document{" +
-                    "index=" + index +
-                    ", weight=" + weight +
-                    '}';
+        public Document(int index,int weight){
+            this.weight=weight;
+            this.index=index;
         }
     }
+
     public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int T = Integer.parseInt(br.readLine());
+        StringTokenizer st;
+        for (int t = 0; t < T; t++) {
 
-        Queue<Document> queue = new LinkedList<>();
-        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
-
-        for (int i = 0; i <T ; i++) {
-            queue.clear();
-            pq.clear();
-
-            StringTokenizer st = new StringTokenizer(br.readLine());
+            st = new StringTokenizer(br.readLine());
 
             int N = Integer.parseInt(st.nextToken());
             int M = Integer.parseInt(st.nextToken());
 
-
+            LinkedList<Integer> weightList = new LinkedList<>();
+            Queue<Document> queue = new LinkedList<>();
+            int count = 0;
             st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; j++) {
+            for (int i = 0; i < N; i++) {
+                int index = i;
                 int weight = Integer.parseInt(st.nextToken());
-                queue.offer(new Document(j, weight));
-                pq.offer(weight);
+                weightList.add(weight);
+                queue.offer(new Document(index, weight));
             }
-
+            Collections.sort(weightList, Collections.reverseOrder());
             while(!queue.isEmpty()){
-                Document cur = queue.poll();
-                int max = pq.peek();
-
-                //최대 값이라면
-                //q에서 제거한다.
-                //찾는 값이라면 출력하고 break;
-                if (cur.weight == max) {
-                    pq.poll();
-                    //찾는 값이라면
-                    if(cur.index==M){
-                        bw.append("" +(N-queue.size())+"\n");
+                Document nowDocument = queue.poll();
+                //지금 중요도가 젤 높을 때
+                if(weightList.get(0)== nowDocument.weight){
+                    count++;
+                    weightList.removeFirst();
+                    if (nowDocument.index == M) {
                         break;
                     }
                 }
-                //최대값이 아니라면 q의 맨 뒤로 보낸다.
-                else {
-                    queue.offer(cur);
+                //더 중요한 게 있을 때
+                else{
+                    queue.offer(nowDocument);
                 }
             }
-
+            bw.append(count + "\n");
         }
         bw.close();
         br.close();
