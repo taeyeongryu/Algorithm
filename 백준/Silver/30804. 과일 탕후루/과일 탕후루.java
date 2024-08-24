@@ -2,8 +2,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -22,12 +20,17 @@ public class Main {
         }
         int left = 0;
         int right = 0;
-        Map<Integer, Integer> fruitKind = new HashMap<>();
-        fruitKind.put(fruit[right], 1);
+        int[] fruitKind = new int[11];
+        fruitKind[fruit[right]] = 1;
         int max = 0;
         while (right < N && left < N) {
             //검사
-            int kind = fruitKind.keySet().size();
+            int kind = 0;
+            for (int i = 0; i < fruitKind.length; i++) {
+                if(fruitKind[i]>0){
+                    kind++;
+                }
+            }
 
             //종류가 2개 이하이면?
             if (kind <= 2) {
@@ -39,23 +42,26 @@ public class Main {
                 }else{
                     break;
                 }
-                if (fruitKind.getOrDefault(fruit[right], 0) == 0) {
-                    fruitKind.put(fruit[right], 1);
+                if (fruitKind[fruit[right]] == 0) {
+                    fruitKind[fruit[right]] = 1;
                 } else {
-                    fruitKind.put(fruit[right], fruitKind.get(fruit[right]) + 1);
+                    fruitKind[fruit[right]]++;
                 }
             }
             //종류가 2개 초과이면
             else {
                 //감
-                if(fruitKind.get(fruit[left])>1){
-                    fruitKind.put(fruit[left], fruitKind.get(fruit[left]) - 1);
-                }else{
-                    fruitKind.remove(fruit[left]);
+                if (fruitKind[fruit[left]] > 1) {
+                    fruitKind[fruit[left]]--;
+                } else {
+                    fruitKind[fruit[left]] = 0;
                 }
                 left++;
             }
         }
-        System.out.println(max);
+        bw.append(max + "");
+        bw.close();
+        br.close();
+
     }
 }
