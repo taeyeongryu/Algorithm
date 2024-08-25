@@ -2,10 +2,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws Exception{
@@ -13,27 +10,35 @@ public class Main {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int T = Integer.parseInt(br.readLine());
-        StringTokenizer st = null;
-        for (int i = 0; i < T; i++) {
-            HashMap<String, Set<String>> map = new HashMap<>();
+        StringTokenizer st;
+        for (int t = 0; t <T ; t++) {
             int N = Integer.parseInt(br.readLine());
-            for (int j = 0; j < N; j++) {
+            if(N==0){
+                bw.append(0+"\n");
+                continue;
+            }
+            Map<String, List<String>> map = new HashMap<>();
+            for (int i = 0; i < N; i++) {
                 st = new StringTokenizer(br.readLine());
                 String cloth = st.nextToken();
                 String category = st.nextToken();
-                Set<String> orDefault = map.getOrDefault(category, new HashSet<>());
-                orDefault.add(cloth);
-                map.put(category, orDefault);
-            }
-            int result = 1;
-            for (String s : map.keySet()) {
-                Set<String> strings = map.get(s);
-                result *= (strings.size()+1);
+                if(!map.containsKey(category)){
+                    map.put(category, new ArrayList<>());
+                }
+                List<String> list = map.get(category);
+                list.add(cloth);
+
             }
 
-            bw.append((result - 1) + "\n");
+            int result = 1;
+            Set<String> keySet = map.keySet();
+            for (String category : keySet) {
+                result = result * (map.get(category).size() + 1);
+            }
+            bw.append(result - 1 + "\n");
         }
         bw.close();
         br.close();
+
     }
 }
