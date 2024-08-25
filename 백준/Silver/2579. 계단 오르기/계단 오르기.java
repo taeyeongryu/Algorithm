@@ -1,32 +1,36 @@
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 public class Main {
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		int N = sc.nextInt();
-		int[][] DP = new int[2][N+1];
-		int arr[] = new int[N+1];
-		for (int i = 1; i < arr.length; i++) {
-			arr[i]=sc.nextInt();
-		}
-		if (N>=2) {
-			DP[0][0]=0;
-			DP[1][0]=0;
-			DP[0][1]=arr[1];
-			DP[1][1]=0;
-			DP[0][2]=arr[1]+arr[2];
-			DP[1][2]=arr[2];
-			for (int i = 3; i < N+1; i++) {
-				DP[0][i]=DP[1][i-1]+arr[i];
-				DP[1][i]=Math.max(DP[1][i-2],DP[0][i-2])+arr[i];
-			}
-			System.out.println(Math.max(DP[0][N],DP[1][N]));
-		}
-		else {
-			System.out.println(arr[N]);
-		}
+        int N = Integer.parseInt(br.readLine());
+        int[] step = new int[N + 1];
+        int[][] dp = new int[2][N + 1];
 
-	}
+
+        for (int i = 1; i < N + 1; i++) {
+            step[i] = Integer.parseInt(br.readLine());
+        }
+        dp[0][1]=step[1];
+        if(N>=2){
+            dp[0][2] = dp[0][1] + step[2];
+            dp[1][2] = step[2];
+        }
+        if(N>=3){
+            for (int i = 3; i < N + 1; i++) {
+                dp[1][i] = Math.max(dp[0][i - 2], dp[1][i - 2]) + step[i];
+                dp[0][i] = dp[1][i - 1] + step[i];
+            }
+        }
+        int result = Math.max(dp[0][N], dp[1][N]);
+        
+        bw.append(result + "");
+        bw.close();
+        br.close();
+    }
 }
