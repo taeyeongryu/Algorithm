@@ -5,63 +5,64 @@ import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    static int N;
     static int[][] map;
-    static int white;
-    static int black;
-    static int sameColor(int r, int c, int dist){
-        int firstColor = map[r][c];
-        for (int i = 0; i < dist; i++) {
-            for (int j = 0; j < dist; j++) {
-                if(map[r+i][c+j]!=firstColor){
-                    //색이 다르면
-                    return 2;
+    static int oneCount;
+    static int zeroCount;
+    static  int check (int r, int c, int length){
+        int first = map[r][c];
+        for (int i = r; i < r + length; i++) {
+            for (int j = c; j < c + length; j++) {
+                if (first != map[i][j]) {
+                    return -1;
                 }
             }
         }
-        //흰색은 0 검은색은 1
-        return firstColor == 0 ? 0 : 1;
+        return first;
     }
-    static void check(int r, int c ,int dist){
-
-        int color = sameColor(r, c, dist);
-        if(color !=2){
-            //흰색이면
-            if (color==0){
-                white++;
-            }
-            //검은색이면
-            else{
-                black++;
+    static void dfs(int r, int c, int length){
+        if(length==1){
+            if (map[r][c] == 1) {
+                oneCount++;
+            } else {
+                zeroCount++;
             }
             return;
         }
-
-        int halfDist = dist / 2;
-        check(r, c, halfDist);
-        check(r + halfDist, c + halfDist, halfDist);
-        check(r + halfDist, c, halfDist);
-        check(r, c + halfDist, halfDist);
+        //도구 같은 색이면
+        int color = check(r, c, length);
+        if(color!=-1){
+            if(color==0){
+                zeroCount++;
+            }else{
+                oneCount++;
+            }
+        }else{
+            dfs(r, c, length / 2);
+            dfs(r + length / 2, c, length / 2);
+            dfs(r, c + length / 2, length / 2);
+            dfs(r + length / 2, c + length / 2, length / 2);
+        }
     }
     public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        int N = Integer.parseInt(br.readLine());
-
+        N = Integer.parseInt(br.readLine());
         map = new int[N][N];
 
-        StringTokenizer st = null;
+        StringTokenizer st;
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < N; j++) {
                 map[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-        check(0,0,N);
-        bw.append(white + "\n");
-        bw.append(black + "");
+        dfs(0, 0, N);
+        bw.append(zeroCount + "\n");
+        bw.append(oneCount + "");
         bw.close();
-        br.close();
 
     }
 }
