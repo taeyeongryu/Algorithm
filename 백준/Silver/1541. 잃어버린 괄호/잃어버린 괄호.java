@@ -1,29 +1,33 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Main {
-	static int answer = 0;
+    public static void main(String[] args) throws Exception {
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		String example = sc.nextLine();
-		String[] str = example.split("-");
-		for (int i = 0; i < str.length; i++) {
-			int temp = MySum(str[i]);
-			if (i == 0) {
-				answer = answer + temp;
-			} else {
-				answer = answer - temp;
-			}
-		}
-		System.out.println(answer);
-	}
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-	public static int MySum(String a) {
-		int sum = 0;
-		String[] temp = a.split("\\+");
-		for (int i = 0; i < temp.length; i++) {
-			sum += Integer.parseInt(temp[i]);
-		}
-		return sum;
-	}
+        String input = br.readLine();
+
+        String[] split = input.split("-");
+        int result = 0;
+        for (int i = 0; i < split.length; i++) {
+            int sum = sumString(split[i]);
+            if(i==0){
+                result +=sum;
+            }else{
+                result -= sum;
+            }
+
+        }
+        System.out.println(result);
+    }
+
+    private static int sumString(String input) {
+        int result = 0;
+        String[] split = input.split("\\+");
+        for (String s : split) {
+            result += Integer.parseInt(s);
+        }
+        return result;
+    }
 }
