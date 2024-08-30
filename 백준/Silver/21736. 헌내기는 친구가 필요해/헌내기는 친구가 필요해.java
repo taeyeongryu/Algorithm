@@ -7,69 +7,51 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-    static class Node{
+    static class Point{
         int r;
         int c;
-
-        public Node(int r, int c) {
+        public Point(int r, int c){
             this.r = r;
             this.c = c;
         }
-
-        @Override
-        public String toString() {
-            return "Node{" +
-                    "r=" + r +
-                    ", c=" + c +
-                    '}';
-        }
     }
-    static int N,M,startI,startJ,cnt;
+    static int N,M,count;
+    static int[] dr = {1, -1, 0, 0};
+    static int[] dc = {0, 0, -1, 1};
+    static Point I;
     static char[][] map;
-    static boolean[][] visited;
-    static int[] dr = {0, 0, 1, -1};
-    static int[] dc = {1, -1, 0, 0};
-    static void bfs(){
-        Queue<Node> q = new LinkedList<>();
+    static boolean visited[][];
 
-        visited[startI][startJ] = true;
-        q.offer(new Node(startI, startJ));
+    public static void bfs(){
+        Queue<Point> queue = new LinkedList<>();
+        visited[I.r][I.c]=true;
+        queue.offer(I);
 
-        while (!q.isEmpty()) {
-
-            Node cur = q.poll();
-
-            int r = cur.r;
-            int c = cur.c;
+        while (!queue.isEmpty()) {
+            Point cur = queue.poll();
 
             for (int i = 0; i < 4; i++) {
-                int nr = r + dr[i];
-                int nc = c + dc[i];
-                if (nr < 0 || nr >= N || nc < 0 || nc >= M) {
+                int nextR = cur.r + dr[i];
+                int nextC = cur.c + dc[i];
+                if (nextR < 0 || nextR >= N || nextC < 0 || nextC >= M) {
                     continue;
                 }
-                if (!visited[nr][nc] && map[nr][nc] != 'X') {
-                    //빈공간이면
-                    if(map[nr][nc]=='O'){
-                        visited[nr][nc] = true;
-                        q.offer(new Node(nr, nc));
-                    }else{
-                        cnt++;
-                        visited[nr][nc] = true;
-                        q.offer(new Node(nr, nc));
+                if (!visited[nextR][nextC] && map[nextR][nextC] != 'X') {
+                    if(map[nextR][nextC]=='P'){
+                        count++;
                     }
+                    visited[nextR][nextC]=true;
+                    queue.offer(new Point(nextR, nextC));
                 }
             }
         }
     }
-
     public static void main(String[] args) throws Exception {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         StringTokenizer st = new StringTokenizer(br.readLine());
-
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
@@ -79,16 +61,18 @@ public class Main {
         for (int i = 0; i < N; i++) {
             String input = br.readLine();
             for (int j = 0; j < M; j++) {
-                char c = input.charAt(j);
-                map[i][j] = c;
-                if (c == 'I') {
-                    startI = i;
-                    startJ = j;
+                map[i][j] = input.charAt(j);
+                if(map[i][j]=='I'){
+                    I = new Point(i, j);
                 }
             }
         }
         bfs();
-        bw.append(cnt == 0 ? "TT" : cnt + "");
+        if(count==0){
+            bw.append("TT");
+        } else{
+            bw.append(count + "");
+        }
         bw.close();
         br.close();
     }
