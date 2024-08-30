@@ -5,49 +5,45 @@ import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int N,R,C;
-//    static int[][] map;
-
-    static int result;
-
-    static boolean check(int r, int c, int n){
-
-        if (r <= R && R < r+n && c <= C && C < c+n) {
-            return true;
+    static int N,R,C, count;
+    static void find(int r, int c, int N){
+        if (r == R && c == C) {
+            count++;
+            return;
         }
-        return false;
-    }
-    static  void search(int r, int c, int n){
-//            System.out.println("r : " + r + ", c : " + c);
-            if(n==1){
-                return;
-            }else{
-                int dist = n / 2;
-                if (check(r, c, dist)) {
-                    search(r, c, dist);
-                } else if (check(r, c + dist, dist)) {
-                    result += dist * dist;
-                    search(r, c + dist, dist);
-                } else if (check(r + dist, c, dist)) {
-                    result += dist * dist * 2;
-                    search(r + dist, c, dist);
-
-                } else {
-                    result += dist * dist * 3;
-                    search(r + dist, c + dist, dist);
-                }
-            }
+        int length = (int) Math.pow(2, N);
+        //2 사분면
+        if (R < r + length/2 && C <c + length/2) {
+            find(r, c, N - 1);
+        }
+        //3 사분면
+        else if (R >= r + length/2 && C <c + length/2) {
+            count += (length / 2) * (length / 2) * 2;
+            find(r + length / 2, c,N-1);
+        }
+        //1 사분면
+        else if (R <r + length / 2 && C >=c + length / 2) {
+            count += (length / 2) * (length / 2);
+            find(r, c + length / 2, N - 1);
+        }
+        //4 사분면
+        else {
+            count += (length / 2) * (length / 2) * 3;
+            find(r + length / 2, c + length / 2, N - 1);
+        }
     }
     public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = new StringTokenizer(br.readLine());
+
         N = Integer.parseInt(st.nextToken());
         R = Integer.parseInt(st.nextToken());
         C = Integer.parseInt(st.nextToken());
-        int pow = (int) Math.pow(2, N);
-        search(0, 0, pow);
-        System.out.println(result);
-//        System.out.println(map[R][C]);
+        find(0, 0, N);
+        bw.append(count - 1 + "");
+        bw.close();
+        br.close();
+
     }
 }
