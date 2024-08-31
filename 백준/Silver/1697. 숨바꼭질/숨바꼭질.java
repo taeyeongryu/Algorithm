@@ -1,60 +1,83 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Main {
-	static class Location {
-		int idx;
-		int time;
+    static int N, K, count;
+    static boolean[] visited;
+    static class Step{
+        int index;
+        int count;
+        public Step(int index, int count){
+            this.index = index;
+            this.count = count;
+        }
+        @Override
+        public String toString(){
+            return "index : " + index + ", count : " + count;
+        }
+    }
+    static void bfs(){
+        Queue<Step> queue = new LinkedList<>();
+        visited[N] = true;
+        queue.offer(new Step(N, 0));
 
-		public Location(int idx, int time) {
-			this.idx = idx;
-			this.time = time;
-		}
-	}
+        while(!queue.isEmpty()){
+//            System.out.println("queue = " + queue);
 
-	static int N, K, result;
-	static boolean[] visited = new boolean[200000];
+            Step cur = queue.poll();
+            if (3 * cur.index < 2 * K && 2 * cur.index < visited.length && !visited[cur.index * 2]) {
+                if (2 * cur.index == K) {
+                    count = cur.count+1;
+                    break;
+                } else {
+                    visited[2 * cur.index] = true;
+                    queue.offer(new Step(2 * cur.index, cur.count + 1));
+                }
+            }
+            if (cur.index + 1 < visited.length && !visited[cur.index + 1]) {
+                if(cur.index+1==K){
+                    count = cur.count+1;
+                    break;
+                }else{
+                    visited[cur.index+1]=true;
+                    queue.offer(new Step(cur.index + 1, cur.count + 1));
+                }
+            }
+            if (cur.index - 1 >= 0 && !visited[cur.index - 1]) {
+                if(cur.index-1==K){
+                    count = cur.count+1;
+                    break;
+                }else{
+                    visited[cur.index-1]=true;
+                    queue.offer(new Step(cur.index - 1, cur.count + 1));
+                }
+            }
+        }
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-	static void bfs() {
-		Queue<Location> q = new LinkedList<>();
-		q.add(new Location(N, 0));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-		// 큐에서 폴한다음에 동생을 만났는지 체크한다.
-		while (!q.isEmpty()) {
-			Location cur = q.poll();
-			int idx = cur.idx;
-			int time = cur.time;
-			if (idx == K) {
-				result = time;
-				return;
-			}
-			if (0 <= idx + 1 && idx + 1 < visited.length) {
-				if (!visited[idx + 1]) {
-					visited[idx + 1] = true;
-					q.add(new Location(idx + 1, time + 1));
-				}
-			}
-			if (0 <= idx - 1 && idx - 1 < visited.length) {
-				if (!visited[idx - 1]) {
-					visited[idx - 1] = true;
-					q.add(new Location(idx - 1, time + 1));
-				}
-			}
-			if (0 <= idx * 2 && idx * 2 < visited.length) {
-				if (!visited[idx * 2]) {
-					visited[idx * 2] = true;
-					q.add(new Location(idx * 2, time + 1));
-				}
-			}
-		}
-	}
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		N = sc.nextInt();
-		K = sc.nextInt();
-		bfs();
-		System.out.println(result);
-	}
+        visited = new boolean[200001];
+
+        if(N==K){
+            bw.append("0");
+        }
+        else{
+            bfs();
+            bw.append(count + "");
+        }
+        bw.close();
+        br.close();
+    }
 }
