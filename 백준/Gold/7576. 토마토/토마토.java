@@ -1,83 +1,89 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-	static class Point {
-		int r;
-		int c;
+    static int N, M;
+    static int[] dr = {-1, 1, 0, 0};
+    static int[] dc = {0, 0, 1, -1};
 
-		public Point(int r, int c) {
-			super();
-			this.r = r;
-			this.c = c;
-		}
+    static int[][] arr;
+    static class Tomato{
 
-		@Override
-		public String toString() {
-			return "Point [r=" + r + ", c=" + c + "]";
-		}
-	}
+        int r;
+        int c;
+        int time;
+        public Tomato(int r, int c, int time){
 
-	static int[] dr = { 1, -1, 0, 0 };
-	static int[] dc = { 0, 0, 1, -1 };
+            this.r = r;
+            this.c = c;
+            this.time = time;
+        }
+    }
+    static boolean[][] visited;
+    static Queue<Tomato> queue = new LinkedList();
+    static int totalTomato;
+    static int goodTomato;
+    static int bfs(){
+        int time = 0;
+        while(!queue.isEmpty()){
+            //지금 토마토
+            Tomato cur = queue.poll();
+            int curTime=cur.time;
+            time=curTime;
 
-	static int M, N, remain, max;
-	static int[][] map, visited;
-	static Queue<Point> q = new LinkedList<>();
+            int curR = cur.r;
+            int curC = cur.c;
+            for (int i = 0; i < 4; i++) {
 
-	static void bfs() {
-		while (!q.isEmpty()) {
-			Point cur = q.poll();
-			for (int i = 0; i < dc.length; i++) {
-				int nr = cur.r + dr[i];
-				int nc = cur.c + dc[i];
-				if (nr < 0 || nc < 0 || nr >= N || nc >= M) {
-					continue;
-				}
-				if (visited[nr][nc] == 0 && map[nr][nc] == 0) {
-					remain--;
-					map[nr][nc] = 1;
-					visited[nr][nc] = visited[cur.r][cur.c] + 1;
-					max = Integer.max(max, visited[nr][nc]);
-					q.add(new Point(nr, nc));
-				}
-			}
-		}
-	}
+                int nextR = curR + dr[i];
+                int nextC = curC + dc[i];
+                if ( nextR < 0 || nextR >= N || nextC < 0 || nextC >= M) {
+                    continue;
+                }
+                if (arr[nextR][nextC] == 0 && !visited[nextR][nextC]) {
+                    goodTomato++;
+                    visited[nextR][nextC]=true;
+                    queue.offer(new Tomato( nextR, nextC, curTime + 1));
+                }
+            }
+        }
+        return time;
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		M = Integer.parseInt(st.nextToken());
-		N = Integer.parseInt(st.nextToken());
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-		map = new int[N][M];
-		visited = new int[N][M];
-		for (int i = 0; i < N; i++) {
-			st = new StringTokenizer(br.readLine());
-			for (int j = 0; j < M; j++) {
-				map[i][j] = Integer.parseInt(st.nextToken());
-				if (map[i][j] == 1) {
-					visited[i][j] = 0;
-					q.add(new Point(i, j));
-				} else if (map[i][j] == 0) {
-					remain++;
-				}
-			}
-		}
-		if (remain == 0) {
-			System.out.println(0);
-		} else {
-			bfs();
-			if (remain > 0) {
-				System.out.println(-1);
-			} else {
-				System.out.println(max);
-			}
-		}
-	}
+        M = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+
+        arr = new int[N][M];
+        visited = new boolean[N][M];
+
+        for (int r = 0; r < N; r++) {
+            st = new StringTokenizer(br.readLine());
+            for (int c = 0; c < M; c++) {
+                arr[r][c] = Integer.parseInt(st.nextToken());
+                if (arr[r][c] == 1 || arr[r][c] == 0) {
+                    totalTomato++;
+                }
+                if (arr[r][c] == 1) {
+                    goodTomato++;
+                    visited[r][c] = true;
+                    queue.offer(new Tomato(r, c, 0));
+                }
+            }
+        }
+
+
+        int result = bfs();
+        if(totalTomato==goodTomato){
+            System.out.println(result);
+        }else{
+            System.out.println(-1);
+        }
+    }
 }
