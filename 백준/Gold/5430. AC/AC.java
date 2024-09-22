@@ -1,85 +1,88 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class Main {
+    static int T;
+    static boolean isDir;
+    static String operator;
+    static Deque<String> deque;
+    static StringBuilder sb;
 
-    static boolean dir;
-    static StringBuilder sb = new StringBuilder();
-    public static void main(String[] args) throws Exception{
-//        List<Integer> list = new LinkedList<>();
+    static boolean oper() {
+        for (int i = 0; i < operator.length(); i++) {
+            char ch = operator.charAt(i);
+            if (ch == 'R') {
+                isDir = !isDir;  // 방향만 변경
+            } else {
+                if (deque.isEmpty()) {  // 덱이 비었을 경우 오류
+                    return false;
+                }
+                // 방향에 따른 삭제
+                if (isDir) {
+                    deque.pollFirst();
+                } else {
+                    deque.pollLast();
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//        Collections.reverse(list);
-//        System.out.println(list.toString());
+        sb = new StringBuilder();
+        T = Integer.parseInt(br.readLine());
 
-        int T = Integer.parseInt(br.readLine());
-        outer:for (int i = 0; i < T; i++) {
-            String operation = br.readLine();
+        for (int t = 0; t < T; t++) {
+            isDir = true;
+            deque = new ArrayDeque<>();
+            operator = br.readLine();
             int arrLength = Integer.parseInt(br.readLine());
-            String strString = br.readLine();
-            dir = true;
-            ArrayDeque<Integer> deque = new ArrayDeque<>();
-            if(arrLength>0){
-                String[] split = strString.substring(1, strString.length() - 1).split(",");
-                for (String s : split) {
-                    deque.add(Integer.parseInt(s));
+            String inputList = br.readLine();
+            if (arrLength > 0) {
+                String trimList = inputList.substring(1, inputList.length() - 1);
+                String[] split = trimList.split(",");
+                for (int i = 0; i < split.length; i++) {
+                    deque.add(split[i]);
                 }
             }
-//            System.out.println(Arrays.toString(split));
-
-//            System.out.println(intList.toString());
-            for (int j = 0; j < operation.length(); j++) {
-                char c = operation.charAt(j);
-                if(c=='R'){
-                    dir=!dir;
-                }
-                else{
-                    //Drop해야 되는데 없으면
-                    if(deque.isEmpty()){
-                        sb.append("error\n");
-                        continue outer;
-                    }
-                    //정방향이면
-                    if(dir){
-                        deque.removeFirst();
-                    }
-                    //역방향이면
-                    else{
-                        deque.removeLast();
-                    }
-                }
-//                System.out.println(intList);
+            boolean flag = oper();
+            if (flag) {
+                makeString(true);
+            } else {
+                makeString(false);
             }
-            makePrintString(deque,dir);
         }
         System.out.println(sb.toString());
         br.close();
     }
-    public static void makePrintString(ArrayDeque<Integer> deque, boolean isRight) {
 
-        sb.append('[');	// 여는 대괄호 먼저 StringBuilder에 저장
-
-        if(deque.size() > 0) {	//만약 출력 할 원소가 한 개 이상일 경우
-
-            if(isRight) {	// 정방향일경우
-
-                sb.append(deque.pollFirst());	// 먼저 첫 번째 원소를 넘겨준다.
-
-                // 그 다음 원소부터 반점을 먼저 넘겨준 후 덱의 원소를 하나씩 뽑아 넘긴다.
-                while(!deque.isEmpty()) {
-                    sb.append(',').append(deque.pollFirst());
+    private static void makeString(boolean success) {
+        if (success) {
+            sb.append("[");
+            // 정방향 출력
+            if (isDir) {
+                while (!deque.isEmpty()) {
+                    sb.append(deque.pollFirst());
+                    if (!deque.isEmpty()) {
+                        sb.append(",");
+                    }
                 }
             }
-            else {	// 역방향일경우
-                sb.append(deque.pollLast());	// 먼저 뒤에서부터 첫 번째 원소를 넘겨준다.
-
-                // 그 다음 원소부터 반점을 먼저 넘겨준 후 덱의 원소를 뒤에서부터 하나씩 뽑아 넘긴다.
-                while(!deque.isEmpty()) {
-                    sb.append(',').append(deque.pollLast());
+            // 역방향 출력
+            else {
+                while (!deque.isEmpty()) {
+                    sb.append(deque.pollLast());
+                    if (!deque.isEmpty()) {
+                        sb.append(",");
+                    }
                 }
             }
+            sb.append("]\n");
+        } else {
+            sb.append("error\n");
         }
-
-        sb.append(']').append('\n');	// 닫는 대괄호 및 개행으로 마무리
     }
 }
