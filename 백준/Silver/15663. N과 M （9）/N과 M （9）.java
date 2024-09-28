@@ -1,8 +1,6 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -18,12 +16,12 @@ public class Main {
             sb.append("\n");
             return;
         }
-        Set<Integer> use = new HashSet<>();
 
+        int before = 0;
         for (int i = 0; i < arr.length; i++) {
-            if (!visited[i] && !use.contains(arr[i])) {
+            if (!visited[i] && before!=arr[i]) {
                 visited[i]=true;
-                use.add(arr[i]);
+                before = arr[i];
                 result[depth] = arr[i];
                 dfs(depth + 1);
                 visited[i] = false;
