@@ -1,33 +1,41 @@
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.StringTokenizer;
 
 public class Main {
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		int N = sc.nextInt();
-		int[] R = new int[N + 1];
-		int[] G = new int[N + 1];
-		int[] B = new int[N + 1];
-		for (int i = 1; i <= N; i++) {
-			R[i] = sc.nextInt();
-			G[i] = sc.nextInt();
-			B[i] = sc.nextInt();
-		}
-		int[][] dp = new int[3][N + 1];
-		dp[0][1] = R[1];
-		dp[1][1] = G[1];
-		dp[2][1] = B[1];
-		for (int i = 2; i <= N; i++) {
-			dp[0][i]=Math.min(dp[1][i-1], dp[2][i-1])+R[i];
-			dp[1][i]=Math.min(dp[0][i-1], dp[2][i-1])+G[i];
-			dp[2][i]=Math.min(dp[1][i-1], dp[0][i-1])+B[i];
-		}
-		int min = Integer.MAX_VALUE;
-		for (int i = 0; i < 3; i++) {
-			min = Math.min(min, dp[i][N]);
-		}
-		System.out.println(min);
-	}
-
+        int N = Integer.parseInt(br.readLine());
+        int[][] map = new int[N+1][3];
+        StringTokenizer st;
+        for (int i = 1; i <= N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < 3; j++) {
+                map[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+        int[][] dp = new int[3][N + 1];
+        for (int i = 1; i <= N; i++) {
+            for (int j = 0; j < 3; j++) {
+                dp[j][i] = Math.min(dp[(j + 1) % 3][i - 1], dp[(j + 2) % 3][i - 1]) + map[i][j];
+            }
+        }
+//        for (int i = 0; i < 3; i++) {
+//            for (int j = 1; j <N+1 ; j++) {
+//                System.out.print(dp[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
+        int result = Integer.MAX_VALUE;
+        for (int i = 0; i < 3; i++) {
+            result = Math.min(result, dp[i][N]);
+        }
+        bw.append(result + "");
+        bw.close();
+        br.close();
+    }
 }
