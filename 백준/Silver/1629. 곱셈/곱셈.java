@@ -5,25 +5,22 @@ import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
 public class Main {
-    static long pow(long A, long B, long C) {
-        if(B==1){
-            return A % C;
-        }
-        if(B==0){
-            return 1;
-        }
-        //B가 짝수일 때
-        long pow1 = 0;
-        long pow2 = 0;
-        if(B%2==0){
-            pow1 = pow(A, B / 2, C);
-            pow2 = pow1;
-        }else{
-            pow1 = pow(A, B / 2, C);
-            pow2 = (pow1 * A) % C;
-        }
-        long result = (pow1 * pow2) % C;
-        return result;
+    static long[] checked;
+    static long pow (long A, long B, long C){
+       if(B==1){
+           return A % C;
+       }
+       else{
+           long tmp = pow(A, B / 2, C);
+           //B가 짝수이면
+           if (B % 2 == 0) {
+                   return (tmp * tmp) % C;
+               }
+           //B가 홀수이면
+           else {
+               return ((tmp * tmp) % C * A) % C;
+           }
+       }
     }
     public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -34,7 +31,11 @@ public class Main {
         long A = Integer.parseInt(st.nextToken());
         long B = Integer.parseInt(st.nextToken());
         long C = Integer.parseInt(st.nextToken());
-        long result = pow(A, B, C);
-        System.out.println(result);
+
+        long pow = pow(A, B, C);
+        bw.append(pow + "");
+        bw.close();
+        br.close();
+
     }
 }
