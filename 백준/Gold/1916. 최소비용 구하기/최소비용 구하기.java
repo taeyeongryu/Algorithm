@@ -1,80 +1,82 @@
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.BufferedWriter;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.io.OutputStreamWriter;
+import java.util.*;
 
 public class Main {
-	static class Node implements Comparable<Node> {
-		int index;
-		int distance;
+    static class Node{
+        int index;
+        int weight;
+        public Node(int index, int weight){
+            this.index = index;
+            this.weight = weight;
+        }
+    }
+    static int N,M;
+    static int[] dist;
+    static List<Node>[] adjList;
+    static PriorityQueue<Node> pq;
+    private static void dijkstra(int index) {
+        dist[index] = 0;
+        pq.offer(new Node(index, 0));
+        while (!pq.isEmpty()) {
+            Node cur = pq.poll();
+            int curIndex = cur.index;
+            int curWeight = cur.weight;
 
-		public Node(int index, int distance) {
-			this.index = index;
-			this.distance = distance;
-		}
+            if (curWeight > dist[curIndex]) {
+                continue;
+            }
+            for (int i = 0; i < adjList[curIndex].size(); i++) {
+                Node next = adjList[curIndex].get(i);
+                int nextIndex = next.index;
+                int nextWeight = next.weight + curWeight;
+                if (nextWeight < dist[nextIndex]) {
+                    dist[nextIndex]=nextWeight;
+                    pq.offer(new Node(nextIndex, nextWeight));
+                }
+            }
+        }
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-		@Override
-		public int compareTo(Node o) {
-			return this.distance >= o.distance ? 1 : -1;
-		}
-	}
+        N = Integer.parseInt(br.readLine());
+        M = Integer.parseInt(br.readLine());
 
-	static final int INF = Integer.MAX_VALUE;
+        adjList = new ArrayList[N + 1];
+        for (int i = 0; i < adjList.length; i++) {
+            adjList[i] = new ArrayList<>();
+        }
 
-	static int n, m, start;
+        StringTokenizer st;
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
 
-	static ArrayList<ArrayList<Node>> graph = new ArrayList<>();
-	static int[] d;
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
+            int weight = Integer.parseInt(st.nextToken());
 
-	static void dijkstra(int start) {
-		PriorityQueue<Node> pq = new PriorityQueue<>();
-		d[start] = 0;
-		pq.add(new Node(start, 0));
-		while (!pq.isEmpty()) {
-			Node node = pq.poll();
-			int dist = node.distance;
-			int now = node.index;
-			if (d[now] < dist) {
-				continue;
-			}
-			for (int i = 0; i < graph.get(now).size(); i++) {
-				Node next_node = graph.get(now).get(i);
-				int index = next_node.index;
-				int distance = next_node.distance;
+            adjList[start].add(new Node(end, weight));
+        }
+        st = new StringTokenizer(br.readLine());
+        int startIndex = Integer.parseInt(st.nextToken());
+        int endIndex = Integer.parseInt(st.nextToken());
+        pq = new PriorityQueue<>(new Comparator<Node>(){
+            @Override
+            public int compare(Node node1, Node node2){
+                return Integer.compare(node1.weight, node2.weight);
+            }
+        });
+        dist = new int[N + 1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dijkstra(startIndex);
+        bw.append(dist[endIndex] + "");
+        bw.close();
+        br.close();
+        
+    }
 
-				if (d[now] + distance < d[index]) {
-					d[index] = d[now] + distance;
-					pq.offer(new Node(index, d[now] + distance));
-				}
-			}
-		}
-	}
-
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		n = Integer.parseInt(br.readLine());
-		m = Integer.parseInt(br.readLine());
-		d = new int[n + 1];
-		StringTokenizer st;
-		Arrays.fill(d, INF);
-		for (int i = 0; i < n+1; i++) {
-			graph.add(new ArrayList<>());
-		}
-		for (int i = 0; i < m; i++) {
-			st = new StringTokenizer(br.readLine());
-			int start = Integer.parseInt(st.nextToken());
-			int end = Integer.parseInt(st.nextToken());
-			int num = Integer.parseInt(st.nextToken());
-			graph.get(start).add(new Node(end, num));
-		}
-		st = new StringTokenizer(br.readLine());
-		start = Integer.parseInt(st.nextToken());
-		int end = Integer.parseInt(st.nextToken());
-		dijkstra(start);
-//		System.out.println(Arrays.toString(d));
-		System.out.println(d[end]);
-	}
 }
