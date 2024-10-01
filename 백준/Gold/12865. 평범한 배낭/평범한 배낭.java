@@ -1,27 +1,33 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		int N = sc.nextInt();
-		int K = sc.nextInt();
-		int[] W = new int[N + 1];
-		int[] V = new int[N + 1];
-		int[][] DP = new int[101][100000 + 1];
-		for (int i = 1; i <= N; i++) {
-			W[i] = sc.nextInt();
-			V[i] = sc.nextInt();
-		}
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-		for (int i = 1; i <=N; i++) {
-			for (int j = 1; j <= 100000; j++) {
-				if (W[i]>j) {
-					DP[i][j]=DP[i-1][j];
-				}else {
-					DP[i][j]=Math.max(DP[i-1][j], DP[i-1][j-W[i]]+V[i]);
-				}
-			}
-		}
-		System.out.println(DP[N][K]);
-	}
+        int N = Integer.parseInt(st.nextToken());
+        int K = Integer.parseInt(st.nextToken());
+        int[][] arr = new int[N + 1][2];
+
+        for (int i = 1; i <= N; i++) {
+            st = new StringTokenizer(br.readLine());
+            arr[i][0] = Integer.parseInt(st.nextToken());
+            arr[i][1] = Integer.parseInt(st.nextToken());
+        }
+
+        int[][] dp = new int[N + 1][K + 1];
+        for (int i = 1; i < N+1; i++) {
+            for (int j = 1; j < K + 1; j++) {
+                if (j - arr[i][0]>=0) {
+                    dp[i][j] = Math.max(dp[i - 1][j - arr[i][0]] + arr[i][1], dp[i - 1][j]);
+                }else{
+                    dp[i][j] = Math.max(dp[i - 1][j] , dp[i - 1][j]);
+                }
+            }
+        }
+        System.out.println(dp[N][K]);
+    }
 }
