@@ -1,113 +1,113 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
 
 public class Main {
-	static class Node implements Comparable<Node> {
-		int idx;
-		int num;
+    static class Node implements Comparable<Node>{
+        int index;
+        long weight;
+        public Node(int index, long weight){
+            this.index = index;
+            this.weight = weight;
+        }
+        @Override
+        public int compareTo(Node n1){
+            return Long.compare(this.weight, n1.weight);
+        }
+    }
+    static List<Node>[] adjList;
+    static long[] fromStart;
+    static long[] fromA;
+    static long[] fromB;
+    static int N,E,A,B;
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-		@Override
-		public String toString() {
-			return "Node [idx=" + idx + ", num=" + num + "]";
-		}
 
-		public Node(int idx, int num) {
-			super();
-			this.idx = idx;
-			this.num = num;
-		}
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-		@Override
-		public int compareTo(Node o) {
-			return Integer.compare(this.num, o.num);
-		}
+        N = Integer.parseInt(st.nextToken());
+        E = Integer.parseInt(st.nextToken());
+        adjList = new ArrayList[N + 1];
+        fromA = new long[N + 1];
+        fromB = new long[N + 1];
+        fromStart = new long[N + 1];
 
-	}
+        Arrays.fill(fromA, Long.MAX_VALUE);
+        Arrays.fill(fromB, Long.MAX_VALUE);
+        Arrays.fill(fromStart, Long.MAX_VALUE);
 
-	static ArrayList<Node>[] adjlist;
-	static int N;
-	static int E;
-	static final int INF = Integer.MAX_VALUE;
-	static int[] price;
 
-	static void dijkstra(int start) {
-		PriorityQueue<Node> pq = new PriorityQueue<>();
-		price[start] = 0;
-		pq.add(new Node(start, 0));
-		while (!pq.isEmpty()) {
-			Node curr = pq.poll();
-			int cur_idx = curr.idx;
-			int cur_num = curr.num;
-			if (price[cur_idx] < cur_num) {
-				continue;
-			}
-			for (int i = 0; i < adjlist[cur_idx].size(); i++) {
-				Node next_node = adjlist[cur_idx].get(i);
-				int next_idx = next_node.idx;
-				int next_num = next_node.num;
-				if (price[next_idx] > price[cur_idx] + next_num) {
-					price[next_idx] = price[cur_idx] + next_num;
-					pq.add(new Node(next_idx, price[next_idx]));
-				}
-			}
+        for (int i = 0; i < adjList.length; i++) {
+            adjList[i] = new ArrayList<>();
+        }
 
-		}
-	}
+        for (int i = 0; i < E; i++) {
+            st = new StringTokenizer(br.readLine());
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		N = sc.nextInt();
-		E = sc.nextInt();
-		price = new int[N + 1];
-		adjlist = new ArrayList[N + 1];
-		for (int i = 0; i < adjlist.length; i++) {
-			adjlist[i] = new ArrayList<Node>();
-		}
-		for (int i = 0; i < E; i++) {
-			int st = sc.nextInt();
-			int end = sc.nextInt();
-			int weight = sc.nextInt();
-			adjlist[st].add(new Node(end, weight));
-			adjlist[end].add(new Node(st, weight));
-		}
-		int start = 1;
-		int end = N;
-		int v1 = sc.nextInt();
-		int v2 = sc.nextInt();
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
+            int weight = Integer.parseInt(st.nextToken());
 
-		Arrays.fill(price, INF);
-		dijkstra(start);
-		int[] price1 = price.clone();
-		Arrays.fill(price, INF);
-		dijkstra(v1);
-		int[] price2 = price.clone();
-		Arrays.fill(price, INF);
-		dijkstra(v2);
-		int[] price3 = price.clone();
-		boolean flag1 = true;
-		boolean flag2 = true;
-		if (price1[end] == INF) {
-			System.out.println(-1);
-		} else {
-			int result1 = 0;
-			int result2 = 0;
-			if (price1[v1] == INF || price2[v2] == INF || price3[end] == INF) {
-				result1 = INF;
-			} else {
-				result1 = price1[v1] + price2[v2] + price3[end];
-			}
-			if (price1[v2] == INF || price3[v1] == INF || price1[end] == INF) {
-				result2 = INF;
+            adjList[start].add(new Node(end, weight));
+            adjList[end].add(new Node(start, weight));
+        }
+        st = new StringTokenizer(br.readLine());
+        A = Integer.parseInt(st.nextToken());
+        B = Integer.parseInt(st.nextToken());
+        dij(1, fromStart);
+        dij(A, fromA);
+        dij(B, fromB);
+//        System.out.println("Arrays.toString(fromStart) = " + Arrays.toString(fromStart));
+//        System.out.println("Arrays.toString(fromA) = " + Arrays.toString(fromA));
+//        System.out.println("Arrays.toString(fromB) = " + Arrays.toString(fromB));
+        boolean flag1 = true;
+        boolean flag2 = true;
+        if (fromStart[N] == Long.MAX_VALUE) {
+            System.out.println(-1);
+        } else {
+            long result1 = 0;
+            long result2 = 0;
+            if (fromStart[A] == Long.MAX_VALUE || fromA[B] == Long.MAX_VALUE || fromB[N] == Long.MAX_VALUE) {
+                result1 = Long.MAX_VALUE;
+            } else {
+                result1 = fromStart[A] + fromA[B] + fromB[N];
+            }
 
-			} else {
-				result2 = price1[v2] + price3[v1] + price2[end];
-			}
-			if (result1 == INF && result2 == INF) {
-				System.out.println(-1);
-			} else
-				System.out.println(Math.min(result1, result2));
-		}
-	}
+            if (fromStart[B] == Long.MAX_VALUE || fromB[A] == Long.MAX_VALUE || fromA[N] == Long.MAX_VALUE) {
+                result2 = Long.MAX_VALUE;
+            } else {
+                result2 = fromStart[B] + fromB[A] + fromA[N];
+            }
+
+            if (result1 == Long.MAX_VALUE && result2 == Long.MAX_VALUE) {
+                System.out.println(-1);
+            } else
+                System.out.println(Math.min(result1, result2));
+        }
+    }
+    static void dij(int start, long[] dist){
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        dist[start] = 0;
+        pq.offer(new Node(start, 0));
+
+        while(!pq.isEmpty()){
+            Node cur = pq.poll();
+            int curIndex = cur.index;
+            long curWeight = cur.weight;
+            if(curWeight>dist[curIndex]){
+                continue;
+            }
+            for (int i = 0; i <adjList[curIndex].size() ; i++) {
+                Node next = adjList[curIndex].get(i);
+                int nextIndex = next.index;
+                long nextWeight = next.weight;
+
+                if(curWeight+nextWeight<dist[nextIndex]){
+                    dist[nextIndex] = curWeight + nextWeight;
+                    pq.offer(new Node(nextIndex, dist[nextIndex]));
+                }
+            }
+        }
+    }
 }
