@@ -1,90 +1,84 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Main {
-	static class Node {
-		int r;
-		int c;
+    static class Node{
+        int r;
+        int c;
+        public Node(int r, int c) {
+            this.r = r;
+            this.c = c;
+        }
+    }
+    static int N, M;
+    static int[] choiced;
+    static List<Node> chicken;
+    static List<Node> house;
+    static int[][] dist;
+    static int min;
+    static void dfs(int depth, int at){
+        if(depth==M){
+            //특정 메소드 실행시킨다.
+            min = Math.min(scan(), min);
+            return;
+        }
+        for (int i = at; i < chicken.size(); i++) {
+            choiced[depth] = i;
+            dfs(depth + 1, i + 1);
+        }
+    }
+    static int scan(){
+        int result = 0;
+        for (int i = 0; i < house.size(); i++) {
+            int tmp = Integer.MAX_VALUE;
+            for (int j = 0; j < choiced.length; j++) {
+                tmp = Math.min(dist[i][choiced[j]], tmp);
+            }
+            result += tmp;
+        }
+        return result;
+    }
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-		Node(int r, int c) {
-			this.r = r;
-			this.c = c;
-		}
-	}
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        min = Integer.MAX_VALUE;
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        choiced = new int[M];
+        house = new ArrayList<>();
+        chicken = new ArrayList<>();
 
-	static int N;
-	static int M;
-	// 여기에 각 치킨집을 돌면서 인덱스에 해당하는 집과의 최소거리를 업데이트 한다.
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < N; j++) {
+                int input = Integer.parseInt(st.nextToken());
+                if (input == 0) {
+                    continue;
+                }else if(input ==1){
+                    house.add(new Node(i, j));
+                }else{
+                    chicken.add(new Node(i, j));
+                }
+            }
+        }
 
-	// 길이는 집의 갯수만큼 설정한다.
-	// M개를 정한 배열 여기에 치킨집을 저장한다.
-	static int[] choice_chicken;
-	static int minchickendis = Integer.MAX_VALUE;
+        dist = new int[house.size()][chicken.size()];
 
-	static List<Node> chickenlist = new ArrayList<>();
-	static List<Node> houselist = new ArrayList<>();
-
-	static int dis(Node node1, Node node2) {
-		return Math.abs(node1.r - node2.r) + Math.abs(node1.c - node2.c);
-	}
-
-	// M개의 치킨집을 고르는 메서드
-	static void combi(int depth, int count, int at) {
-		if (count == M) {
-			// 거리 계산하고 리턴
-			find_dis();
-			return;
-		}
-		if (depth == chickenlist.size()) {
-			return;
-		}
-		for (int i = at; i < chickenlist.size(); i++) {
-			choice_chicken[depth] = i;
-			combi(depth + 1, count + 1, i + 1);
-		}
-	}
-
-	// 치킨집과 집들의 치킨거리를 재면서 최소값을 경신하는 메서드
-	static void find_dis() {
-		int[] dis = new int[houselist.size()];
-		for (int i = 0; i < dis.length; i++) {
-			dis[i]=Integer.MAX_VALUE;
-		}
-		for (int i = 0; i < choice_chicken.length; i++) {
-			Node chicken = chickenlist.get(choice_chicken[i]);
-			for (int j = 0; j < houselist.size(); j++) {
-				Node house = houselist.get(j);
-				int tmp = dis(chicken, house);
-				dis[j]=Math.min(dis[j], tmp);
-			}
-		}
-		int total=0;
-		for (int i = 0; i < dis.length; i++) {
-			total+=dis[i];
-		}
-		minchickendis=Math.min(total, minchickendis);
-	}
-
-	public static void main(String[] args) {
-		// chicken_dis의 배열 최대값으로 초기화 해야한다.
-		Scanner sc = new Scanner(System.in);
-		N = sc.nextInt();
-		M = sc.nextInt();
-		choice_chicken = new int[M];
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				int tmp = sc.nextInt();
-				if (tmp == 1) {
-					houselist.add(new Node(i, j));
-				} else if (tmp == 2) {
-					chickenlist.add(new Node(i, j));
-				}
-			}
-		}
-		combi(0, 0, 0);
-		System.out.println(minchickendis);
-	}
-
+        for (int i = 0; i < dist.length; i++) {
+            for (int j = 0; j < dist[0].length; j++) {
+                Node nowHouse = house.get(i);
+                Node nowChicken = chicken.get(j);
+                dist[i][j] = Math.abs(nowHouse.r - nowChicken.r) + Math.abs(nowHouse.c - nowChicken.c);
+            }
+        }
+        dfs(0, 0);
+        System.out.println(min);
+    }
 }
