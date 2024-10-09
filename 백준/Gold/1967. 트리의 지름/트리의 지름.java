@@ -5,102 +5,84 @@ import java.io.OutputStreamWriter;
 import java.util.*;
 
 public class Main {
-    static class Node {
+    static class Node{
         int index;
-        int dist;
-
-        public Node(int index, int dist) {
+        int weight;
+        public Node(int index, int weight){
             this.index = index;
-            this.dist = dist;
+            this.weight = weight;
         }
-
         @Override
-        public String toString() {
-            return "Node{" +
-                    "index=" + index +
-                    ", dist=" + dist +
-                    '}';
+        public String toString(){
+            return "index : " + index + ", weight : " + weight;
         }
     }
-
+    static Node[] parent;
+    static List<Node>[] child;
     static int N;
-    static List<Node>[] adjList;
-    static List<Integer> leafNodeList = new ArrayList<>();
-
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         N = Integer.parseInt(br.readLine());
-
-
-        adjList = new ArrayList[N + 1];
-        visited = new boolean[N + 1];
-        for (int i = 0; i < adjList.length; i++) {
-            adjList[i] = new ArrayList<>();
-        }
-
-
         StringTokenizer st = null;
 
+        parent = new Node[N + 1];
+        child = new ArrayList[N + 1];
+        for (int i = 0; i < child.length; i++) {
+            child[i] = new ArrayList<>();
+        }
         for (int i = 0; i < N - 1; i++) {
             st = new StringTokenizer(br.readLine());
-            int parent = Integer.parseInt(st.nextToken());
-            int child = Integer.parseInt(st.nextToken());
-            int weight = Integer.parseInt(st.nextToken());
-            adjList[parent].add(new Node(child, weight));
-            adjList[child].add(new Node(parent, weight));
+            int p = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+            int w = Integer.parseInt(st.nextToken());
+            child[p].add(new Node(c, w));
+            parent[c] = new Node(p, w);
         }
-        findLeafNode();
-        for (Integer i : leafNodeList) {
-            visited[i]=true;
-            dfs(i, 0);
+        leafNodeList = new ArrayList<>();
+        for (int i = 1; i < child.length; i++) {
+            if(child[i].size()==0){
+                leafNodeList.add(i);
+            }
+        }
+        max = Integer.MIN_VALUE;
+        for (int i = 0; i < leafNodeList.size(); i++) {
+            int curLeaf = leafNodeList.get(i);
+            visited = new boolean[N + 1];
+            visited[curLeaf]=true;
+            dfs(curLeaf, 0);
         }
         bw.append(max + "");
+
         bw.close();
         br.close();
     }
 
-    static int max = Integer.MIN_VALUE;
+    static List<Integer> leafNodeList;
     static boolean[] visited;
-    //방문체크는 메서드 시작하기 전에 해야한다.
-    //index는 여기서부터 탐색을 시작한다는 의미이다.
-    private static void dfs(int index, int length){
-        max = Math.max(length, max);
-        for (int i = 0; i <adjList[index].size() ; i++) {
-            Node nextNode = adjList[index].get(i);
-            int nextIndex = nextNode.index;
-            int nextDist = nextNode.dist;
-            if (!visited[nextIndex]) {
-                visited[nextIndex] = true;
-                dfs(nextIndex,length+nextDist);
-                visited[nextIndex] = false;
-            }
+    static int max;
+    static void dfs(int start,int dist){
+
+        Node parentNode = parent[start];
+        if (parentNode != null && !visited[parentNode.index]) {
+            visited[parentNode.index] = true;
+            dfs(parentNode.index, dist + parentNode.weight);
         }
-    }
-
-    private static void findLeafNode() {
-        int rootNode = 1;
-        Queue<Integer> q = new LinkedList<>();
-        boolean[] visited = new boolean[N + 1];
-        visited[rootNode] = true;
-        q.offer(rootNode);
-
-        while (!q.isEmpty()) {
-            boolean flag = false;
-            int cur = q.poll();
-
-            for (int i = 0; i < adjList[cur].size(); i++) {
-                int next = adjList[cur].get(i).index;
-                if(!visited[next]){
-                    flag = true;
-                    visited[next]=true;
-                    q.offer(next);
+        //자식 있으면
+        if(child[start].size()!=0){
+            for (int i = 0; i < child[start].size(); i++) {
+                Node nextChild = child[start].get(i);
+                if(!visited[nextChild.index]){
+                    visited[nextChild.index]=true;
+                    dfs(nextChild.index, dist + nextChild.weight);
+                }
+                else{
+                    max = Math.max(max, dist);
                 }
             }
-            if (!flag){
-                leafNodeList.add(cur);
-            }
+        }else{
+            max = Math.max(max, dist);
         }
     }
 }
