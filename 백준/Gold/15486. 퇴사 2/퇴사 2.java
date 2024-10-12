@@ -1,36 +1,34 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-	public static void main(String[] args) throws NumberFormatException, IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		StringTokenizer st;
-		int N = Integer.parseInt(br.readLine());
-		int[] T = new int[N + 1];
-		int[] P = new int[N + 1];
-		int[] D = new int[N + 1];
-		for (int i = 1; i < P.length; i++) {
-			st = new StringTokenizer(br.readLine());
-			T[i]=Integer.parseInt(st.nextToken());
-			P[i]=Integer.parseInt(st.nextToken());
-		}
-		for (int i = 1; i <= N; i++) {
-			//먼저 i번째 날까지 번 최고의 돈을 업데이트 해준다.
-			D[i]=Math.max(D[i-1], D[i]);
-			if (i+T[i]-1>N) {
-				continue;
-			}
-			//오늘 일하면 일끝나는 날에 최고 얼마를 벌 수 있는지 업데이트한다.
-			D[i+T[i]-1]=Math.max(D[i+T[i]-1], D[i-1]+P[i]);
-		}
-		System.out.println(D[N]);
-	}
+        int N = Integer.parseInt(br.readLine());
 
+        int[] T = new int[N + 1];
+        int[] P = new int[N + 1];
+        int[] dp = new int[N + 1];
+        StringTokenizer st = null;
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            int t = Integer.parseInt(st.nextToken());
+            int p = Integer.parseInt(st.nextToken());
+            T[i + 1] = t;
+            P[i + 1] = p;
+        }
+
+        for (int i = 1; i < N + 1; i++) {
+            dp[i] = Math.max(dp[i - 1], dp[i]);
+            if (T[i] + i - 1 <= N) {
+                dp[i - 1 + T[i]] = Math.max(dp[i - 1 + T[i]], dp[i - 1] + P[i]);
+            }
+        }
+        System.out.println(dp[N]);
+    }
 }
